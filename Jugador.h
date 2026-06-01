@@ -1,7 +1,3 @@
-//
-// Created by Gabri on 5/31/26.
-//
-
 #ifndef PROYECTO_2_JUGADOR_H
 #define PROYECTO_2_JUGADOR_H
 #include <string>
@@ -10,31 +6,41 @@
 #include "Pokemon.h"
 #include "Inventario.h"
 
+// El jugador principal de la simulacion, hereda de Character
+// Tiene un equipo de hasta 6 pokemon, un inventario y monedas
 class Jugador : public Character {
 private:
-    std::string nombre;
-    std::vector<Pokemon> equipo;
+    string nombre;
+    vector<Pokemon> equipo;  // maximo 6 pokemon
     Inventario inventario;
-    int plata;
-    int medallas;
+    int plata;     // monedas del jugador
+    int medallas;  // medallas de gimnasio ganadas
+
 public:
     Jugador();
-    explicit Jugador(std::string nombre);
-    std::string getNombre() override;
+    Jugador(string nombre);
+
+    string getNombre() override;
     int getPlata();
     int getMedallas();
     Inventario& getInventario();
-    const std::vector<Pokemon>& getEquipo() const;
+    const vector<Pokemon>& getEquipo() const;
+
+    // Manejo del equipo
     bool agregarPokemon(Pokemon p);
-    bool quitarPokemon(int index);
-    Pokemon* getPokemon(int index);
-    Pokemon* getPokemonActiv();
+    bool quitarPokemon(int indice);
+    Pokemon* getPokemon(int indice);
+    Pokemon* getPokemonActiv(); // retorna el primer pokemon vivo
+
     bool tienePokemonVivo() const;
     int getTamano();
+
+    // Manejo de monedas
     void agregarPlata(int cantidad);
     bool gastarPlata(int cantidad);
+
     void agregarMedalla();
-    void curarEquipo();
+    void curarEquipo(); // cura todos los pokemon del equipo
 };
 
-#endif //PROYECTO_2_JUGADOR_H
+#endif // PROYECTO_2_JUGADOR_H

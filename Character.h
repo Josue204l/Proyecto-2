@@ -1,16 +1,13 @@
-//
-// Created by jr156 on 28/5/2026.
-//
-
 #ifndef PROYECTO_2_CHARACTER_H
 #define PROYECTO_2_CHARACTER_H
 #include <string>
 
+// Clase base abstracta para cualquier personaje del juego
+// Jugador y Entrenador heredan de esta clase
 class Character {
 public:
     virtual ~Character() = default;
-    virtual std::string getNombre() = 0;
+    virtual string getNombre() = 0; // todo personaje debe tener nombre
 };
 
-
-#endif //PROYECTO_2_CHARACTER_H
+#endif // PROYECTO_2_CHARACTER_H

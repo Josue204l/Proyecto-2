@@ -1,23 +1,22 @@
-//
-// Created by Gabri on 5/31/26.
-//
-
 #include "Inventario.h"
 
-Inventario::Inventario() {}
+Inventario::Inventario() {
+    // empieza vacio
+}
 
 void Inventario::agregarItem(Item& item) {
     items.push_back(item);
 }
 
-bool Inventario::removerItem(int index) {
-    if (index < 0 || index >= (int)items.size()) return false;
-    items.erase(items.begin() + index);
+// Elimina el item en la posicion indicada, retorna false si el indice no existe
+bool Inventario::removerItem(int indice) {
+    if (indice < 0 || indice >= (int)items.size()) return false;
+    items.erase(items.begin() + indice);
     return true;
 }
 
-Item Inventario::getItem(int index) {
-    return items.at(index);
+Item Inventario::getItem(int indice) {
+    return items.at(indice);
 }
 
 int Inventario::getTamano() const {
@@ -32,6 +31,6 @@ void Inventario::limpiar() {
     items.clear();
 }
 
-const std::vector<Item>& Inventario::getItems() const {
+const vector<Item>& Inventario::getItems() const {
     return items;
 }

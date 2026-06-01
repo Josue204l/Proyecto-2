@@ -1,11 +1,8 @@
-//
-// Created by Gabri on 5/31/26.
-//
-
 #ifndef PROYECTO_2_ENUMS_H
 #define PROYECTO_2_ENUMS_H
-enum class TipoPokemon
-{
+
+// Tipos de Pokemon para calcular ventajas en combate
+enum class TipoPokemon {
     NORMAL,
     FIRE,
     WATER,
@@ -15,21 +12,21 @@ enum class TipoPokemon
     FLYING
 };
 
-enum class TipoEvento
-{
-    WILD_POKEMON,
-    TRAINER,
-    SHOP,
-    POKEMON_CENTER,
-    TREASURE,
-    TRAP,
-    NPC,
-    GYM,
-    LEAGUE
+// Tipos de evento que puede tener cada lugar del mapa
+enum class TipoEvento {
+    WILD_POKEMON,    // aparece un pokemon salvaje
+    TRAINER,         // batalla contra un entrenador
+    SHOP,            // tienda de objetos
+    POKEMON_CENTER,  // cura a todos los pokemon
+    TREASURE,        // encontras un item gratis
+    TRAP,            // trampa que hace danno
+    NPC,             // personaje que da un mensaje
+    GYM,             // batalla contra lider de gimnasio
+    LEAGUE           // batalla final de la liga
 };
 
-enum class TipoItem
-{
+// Tipos de item que puede tener el jugador
+enum class TipoItem {
     POKEBALL,
     GREATBALL,
     POTION,
@@ -37,12 +34,12 @@ enum class TipoItem
     RARE_CANDY
 };
 
-enum class Rareza
-{
+// Rareza de cada especie de pokemon
+enum class Rareza {
     COMMON,
     RARE,
     EPIC,
     LEGENDARY
 };
 
-#endif //PROYECTO_2_ENUMS_H
+#endif // PROYECTO_2_ENUMS_H

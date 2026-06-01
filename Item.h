@@ -1,27 +1,23 @@
-//
-// Created by jr156 on 28/5/2026.
-//
-
 #ifndef PROYECTO_2_ITEM_H
 #define PROYECTO_2_ITEM_H
 #include <string>
-
 #include "Enums.h"
+using namespace std;
 
-
+// Representa un objeto que el jugador puede tener en su inventario
 class Item {
-    private:
-    std::string nombre;
+private:
+    string nombre;
     TipoItem tipo;
-    int valor;
-    public:
+    int valor; // precio en monedas
+
+public:
     Item();
-    Item(std::string nombre, TipoItem tipo, int valor);
-    std::string getNombre();
+    Item(string nombre, TipoItem tipo, int valor);
+
+    string getNombre();
     TipoItem getTipo();
     int getValor();
-
 };
 
-
-#endif //PROYECTO_2_ITEM_H
+#endif // PROYECTO_2_ITEM_H

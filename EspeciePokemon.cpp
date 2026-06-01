@@ -1,43 +1,31 @@
-//
-// Created by Gabri on 5/31/26.
-//
-
 #include "EspeciePokemon.h"
 
-EspeciePokemon::EspeciePokemon() : nombre ("Desconocido"),tipo(TipoPokemon::NORMAL),hpBase(0),ataqueBase(0),defensaBase(0),nivelEvolucion(0),nombreEvolucion("Nada"),rarity(Rareza::COMMON){}
-
-EspeciePokemon::EspeciePokemon(const string &nom, TipoPokemon tip, int hpb, int ataBase, int defeBase, int nivEvo, const string &nombEvo, Rareza rar) {
-    this->nombre = nom;
-    this->tipo = tip;
-    this->hpBase = hpb;
-    this->ataqueBase = ataBase;
-    this->defensaBase = defeBase;
-    this->nivelEvolucion = nivEvo;
-    this->nombreEvolucion = nombEvo;
-    this->rarity = rar;
-}
-std::string EspeciePokemon::getNombre()const {
-    return this->nombre;
-}
-TipoPokemon EspeciePokemon::getTipo()const {
-    return this->tipo;
-}
-int EspeciePokemon::getHpBase()const {
-    return this->hpBase;
-}
-int EspeciePokemon::getAtaqueBase()const {
-    return this->ataqueBase;
+// Constructor por defecto, crea una especie vacia
+EspeciePokemon::EspeciePokemon()
+    : nombre("Desconocido"), tipo(TipoPokemon::NORMAL),
+      hpBase(0), ataqueBase(0), defensaBase(0),
+      nivelEvolucion(0), nombreEvolucion("NADA"), rareza(Rareza::COMMON) {
 }
 
-int EspeciePokemon::getDefenseBase() const {
-     return this->defensaBase;
+// Constructor con todos los datos de la especie
+EspeciePokemon::EspeciePokemon(const string& nombre, TipoPokemon tipo, int hpBase,
+                               int ataqueBase, int defensaBase, int nivelEvolucion,
+                               const string& nombreEvolucion, Rareza rareza) {
+    this->nombre = nombre;
+    this->tipo = tipo;
+    this->hpBase = hpBase;
+    this->ataqueBase = ataqueBase;
+    this->defensaBase = defensaBase;
+    this->nivelEvolucion = nivelEvolucion;
+    this->nombreEvolucion = nombreEvolucion;
+    this->rareza = rareza;
 }
-int EspeciePokemon::getNivelEvolucion()const {
-    return this->nivelEvolucion;
-}
-std::string EspeciePokemon::getNombreEvolucion()const {
-    return this->nombreEvolucion;
-}
-Rareza EspeciePokemon::getRareza()const {
-    return this->rarity;
-}
+
+string EspeciePokemon::getNombre() const { return nombre; }
+TipoPokemon EspeciePokemon::getTipo() const { return tipo; }
+int EspeciePokemon::getHpBase() const { return hpBase; }
+int EspeciePokemon::getAtaqueBase() const { return ataqueBase; }
+int EspeciePokemon::getDefenseBase() const { return defensaBase; }
+int EspeciePokemon::getNivelEvolucion() const { return nivelEvolucion; }
+string EspeciePokemon::getNombreEvolucion() const { return nombreEvolucion; }
+Rareza EspeciePokemon::getRareza() const { return rareza; }

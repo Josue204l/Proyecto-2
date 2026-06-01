@@ -1,28 +1,26 @@
-//
-// Created by Gabri on 5/31/26.
-//
-
 #ifndef PROYECTO_2_ENTRENADOR_H
 #define PROYECTO_2_ENTRENADOR_H
-
 #include <string>
 #include <vector>
 #include "Pokemon.h"
+
+// Representa un entrenador o lider de gimnasio que el jugador puede enfrentar
 class Entrenador {
-    private:
-    std::string nombre;
-    std::vector<Pokemon> equipo;
-    int plataGanada;
-    public:
+private:
+    string nombre;
+    vector<Pokemon> equipo;
+    int plataGanada; // monedas que da al ser derrotado
+
+public:
     Entrenador();
-    Entrenador(std::string nombre, int plataGanada);
-    std::string getNombre();
+    Entrenador(string nombre, int plataGanada);
+
+    string getNombre();
     int getPlataGanada();
-    const std::vector<Pokemon>& getEquipo();
-    void addPokemon(Pokemon &p);
-    Pokemon& getPokemon(int index);
-    bool tienePokemonVivos()const;
+    const vector<Pokemon>& getEquipo();
+    void addPokemon(Pokemon& p);
+    Pokemon& getPokemon(int indice);
+    bool tienePokemonVivos() const;
 };
 
-
-#endif //PROYECTO_2_ENTRENADOR_H
+#endif // PROYECTO_2_ENTRENADOR_H
