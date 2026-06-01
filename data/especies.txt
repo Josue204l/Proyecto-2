@@ -1,0 +1,23 @@
+# Archivo de especies Pokemon
+# Formato: nombre,tipo,hpBase,ataqueBase,defensaBase,nivelEvolucion,nombreEvolucion,rareza
+# Tipos validos: NORMAL, FIRE, WATER, GRASS, ELECTRIC, ROCK, FLYING
+# Rareza valida: COMMON, RARE, EPIC, LEGENDARY
+# Si no evoluciona usar: NADA como nombreEvolucion y 0 como nivelEvolucion
+
+Bulbasaur,GRASS,45,49,49,16,Ivysaur,COMMON
+Ivysaur,GRASS,60,62,63,32,Venusaur,RARE
+Venusaur,GRASS,80,82,83,0,NADA,EPIC
+Charmander,FIRE,39,52,43,16,Charmeleon,COMMON
+Charmeleon,FIRE,58,64,58,36,Charizard,RARE
+Charizard,FIRE,78,84,78,0,NADA,EPIC
+Squirtle,WATER,44,48,65,16,Wartortle,COMMON
+Wartortle,WATER,59,63,80,36,Blastoise,RARE
+Blastoise,WATER,79,83,100,0,NADA,EPIC
+Pikachu,ELECTRIC,35,55,40,0,NADA,RARE
+Raichu,ELECTRIC,60,90,55,0,NADA,EPIC
+Geodude,ROCK,40,80,100,25,Graveler,COMMON
+Graveler,ROCK,55,95,115,0,NADA,RARE
+Pidgey,FLYING,40,45,40,18,Pidgeotto,COMMON
+Pidgeotto,FLYING,63,60,55,36,Pidgeot,RARE
+Pidgeot,FLYING,83,80,75,0,NADA,EPIC
+Mewtwo,NORMAL,106,110,90,0,NADA,LEGENDARY

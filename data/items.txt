@@ -1,0 +1,9 @@
+# Archivo de items
+# Formato: nombre,tipo,valor
+# Tipos validos: POKEBALL, GREATBALL, POTION, SUPER_POTION, RARE_CANDY
+
+Pocion,POTION,100
+Super Pocion,SUPER_POTION,200
+Pokeball,POKEBALL,50
+Greatball,GREATBALL,150
+Caramelo Raro,RARE_CANDY,300

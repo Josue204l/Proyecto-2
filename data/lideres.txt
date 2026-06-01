@@ -1,0 +1,11 @@
+# Archivo de lideres de gimnasio
+# Formato: nombre,plataGanada,pokemon1:nivel1,pokemon2:nivel2,...
+# Los nombres de pokemon deben coincidir exactamente con los de especies.txt
+
+Brock,300,Geodude:12,Graveler:14
+Misty,350,Squirtle:15,Wartortle:18
+Lt. Surge,400,Pikachu:20,Raichu:22
+Erika,450,Bulbasaur:22,Ivysaur:24
+Koga,500,Pidgey:25,Pidgeotto:27
+Blaine,550,Charmander:28,Charmeleon:30
+Giovanni,700,Geodude:30,Raichu:32,Charizard:35

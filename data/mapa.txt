@@ -1,0 +1,34 @@
+# Archivo de mapa del mundo
+# Formato: id,nombre,tipoEvento,conexion1,conexion2,...
+# Tipos de evento validos: WILD_POKEMON, TRAINER, SHOP, POKEMON_CENTER, TREASURE, TRAP, NPC, GYM, LEAGUE
+# Las conexiones son los IDs de los lugares a los que se puede ir desde este lugar
+
+0,Pueblo Paleta,NPC,1
+1,Ruta 1,WILD_POKEMON,2,3
+2,Ciudad Plateada,POKEMON_CENTER,4
+3,Ruta 2,WILD_POKEMON,4,5
+4,Ciudad Celeste,GYM,6
+5,Ruta 3,TRAINER,6,7
+6,Ruta 4,WILD_POKEMON,8
+7,Cueva Roca,TRAP,8
+8,Ciudad Cerulean,GYM,9,10
+9,Ruta 5,WILD_POKEMON,11
+10,Tienda Cerulean,SHOP,11
+11,Ruta 6,TRAINER,12
+12,Ciudad Carmines,POKEMON_CENTER,13
+13,Ruta 7,WILD_POKEMON,14,15
+14,Bosque Verde,TREASURE,16
+15,Ruta 8,TRAINER,16
+16,Ciudad Lavanda,NPC,17
+17,Ruta 9,WILD_POKEMON,18
+18,Ciudad Azulona,GYM,19,20
+19,Ruta 10,TRAINER,21
+20,Tienda Azulona,SHOP,21
+21,Ruta 11,WILD_POKEMON,22
+22,Ciudad Fucsia,POKEMON_CENTER,23
+23,Ruta 12,TRAINER,24
+24,Ciudad Plateada 2,GYM,25
+25,Ruta 13,WILD_POKEMON,26
+26,Ciudad Canela,GYM,27
+27,Ruta Final,TRAINER,28
+28,Liga Pokemon,LEAGUE
