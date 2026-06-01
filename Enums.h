@@ -3,7 +3,7 @@
 //
 
 #ifndef PROYECTO_2_ENUMS_H
-#define PROYECTO_2_ENUMS_Henum
+#define PROYECTO_2_ENUMS_H
 enum class TipoPokemon
 {
     NORMAL,

@@ -6,15 +6,16 @@
 #define PROYECTO_2_WORLD_H
 
 #include "Lugar.h"
+
 class World {
-    private :
+private:
     std::vector<Lugar*> lugares;
-    public :
+public:
     World();
-    void agregarLugar(const Lugar* lugar);
+    ~World();
+    void agregarLugar(Lugar* lugar);
     Lugar* getLugar(int id);
     const std::vector<Lugar*>& getLugares() const;
 };
-
 
 #endif //PROYECTO_2_WORLD_H

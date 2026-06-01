@@ -3,3 +3,10 @@
 //
 
 #include "EventoNPC.h"
+#include "Logger.h"
+
+EventoNPC::EventoNPC(const std::string& mensaje) : mensaje(mensaje) {}
+
+void EventoNPC::ejecutar(Jugador& jugador) {
+    Logger::getInstancia().log("[NPC] " + mensaje);
+}
