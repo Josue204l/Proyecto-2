@@ -6,16 +6,22 @@
 #define PROYECTO_2_WORLD_H
 
 #include "Lugar.h"
+using namespace std;
 
 class World {
 private:
-    std::vector<Lugar*> lugares;
+    vector<Lugar*> lugares;
 public:
     World();
     ~World();
+
+    // Constructor de copia y operador = para evitar doble delete de punteros
+    World(const World& otro);
+    World& operator=(const World& otro);
+
     void agregarLugar(Lugar* lugar);
     Lugar* getLugar(int id);
-    const std::vector<Lugar*>& getLugares() const;
+    const vector<Lugar*>& getLugares() const;
 };
 
-#endif //PROYECTO_2_WORLD_H
+#endif // PROYECTO_2_WORLD_H

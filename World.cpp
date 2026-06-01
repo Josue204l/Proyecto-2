@@ -6,22 +6,40 @@
 
 World::World() {}
 
+// Constructor de copia: hace copias profundas de cada Lugar
+World::World(const World& otro) {
+    for (Lugar* l : otro.lugares) {
+        lugares.push_back(new Lugar(*l));
+    }
+}
+
+// Operador de asignacion: libera los actuales y copia los nuevos
+World& World::operator=(const World& otro) {
+    if (this == &otro) return *this;
+    for (Lugar* l : lugares) delete l;
+    lugares.clear();
+    for (Lugar* l : otro.lugares) {
+        lugares.push_back(new Lugar(*l));
+    }
+    return *this;
+}
+
 void World::agregarLugar(Lugar* lugar) {
     lugares.push_back(lugar);
 }
 
 Lugar* World::getLugar(int id) {
-    for (auto* l : lugares) {
+    for (Lugar* l : lugares) {
         if (l->getId() == id) return l;
     }
     return nullptr;
 }
 
-const std::vector<Lugar*>& World::getLugares() const {
+const vector<Lugar*>& World::getLugares() const {
     return lugares;
 }
 
 World::~World() {
-    for (auto* l : lugares) delete l;
+    for (Lugar* l : lugares) delete l;
     lugares.clear();
 }

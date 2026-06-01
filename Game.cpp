@@ -12,11 +12,13 @@
 #include "EventoCentroPokemon.h"
 #include "EventoTiendaObjetos.h"
 #include "EventoTesoro.h"
+#include "EventoAtrapar.h"
 #include "EventoNPC.h"
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+using namespace std;
 
 Game::Game() : ubicacionActual(0), muerto(false) {}
 
@@ -24,18 +26,28 @@ void Game::elegirStarter() {
     Logger& log = Logger::getInstancia();
     const auto& especies = loader.getEspecie();
     if (especies.empty()) {
-        log.log("[Error] No hay especies cargadas para elegir starter.");
+        log.log("Error: No hay especies cargadas para elegir starter.");
         return;
     }
-    // Pick first 3 species as starters (or fewer if not enough)
+
+    // Muestra los 3 primeros pokemon como opciones de inicio
     int opciones = (int)especies.size() < 3 ? (int)especies.size() : 3;
-    log.log("\n=== Elige tu Pokemon inicial ===");
+    cout << "\n=== Elige tu Pokemon inicial ===" << endl;
     for (int i = 0; i < opciones; i++) {
-        log.log("  [" + std::to_string(i) + "] " + especies[i].getNombre());
+        cout << "  [" << (i + 1) << "] " << especies[i].getNombre() << endl;
     }
-    // Auto-select index 0 for simulation
+
+    // El jugador elige entre 1 y 3
     int eleccion = 0;
-    Pokemon starter = PokemonFactory::crearPoke(especies[eleccion], 5);
+    while (eleccion < 1 || eleccion > opciones) {
+        cout << "Tu eleccion (1-" << opciones << "): ";
+        cin >> eleccion;
+        if (eleccion < 1 || eleccion > opciones) {
+            cout << "Opcion invalida, intenta de nuevo." << endl;
+        }
+    }
+
+    Pokemon starter = PokemonFactory::crearPoke(especies[eleccion - 1], 5);
     jugador.agregarPokemon(starter);
     log.log("Elegiste a " + starter.getNombre() + " como tu Pokemon inicial!");
 }
@@ -43,30 +55,27 @@ void Game::elegirStarter() {
 void Game::inicializar() {
     srand((unsigned)time(nullptr));
     Logger& log = Logger::getInstancia();
-    log.log("========================================");
-    log.log("   MOTOR DE SIMULACION POKEMON");
-    log.log("========================================");
+    log.log("Iniciando simulacion Pokemon...");
 
     // Load data files
     if (!loader.cargarEspecies("data/especies.txt")) {
-        log.log("[Advertencia] No se cargaron especies.");
+        log.log("Advertencia: No se cargaron especies.");
     } else {
-        log.log("[Init] Especies cargadas: " + std::to_string(loader.getEspecie().size()));
+        log.log("Especies cargadas: " + std::to_string(loader.getEspecie().size()));
     }
     if (!loader.cargarItem("data/items.txt")) {
-        log.log("[Advertencia] No se cargaron items.");
+        log.log("Advertencia: No se cargaron items.");
     } else {
-        log.log("[Init] Items cargados: " + std::to_string(loader.getItems().size()));
+        log.log("Items cargados: " + std::to_string(loader.getItems().size()));
     }
     if (!loader.cargarLiderGym("data/lideres.txt")) {
-        log.log("[Advertencia] No se cargaron lideres de gimnasio.");
+        log.log("Advertencia: No se cargaron lideres de gimnasio.");
     } else {
-        log.log("[Init] Lideres cargados: " + std::to_string(loader.getLiderGym().size()));
+        log.log("Lideres cargados: " + std::to_string(loader.getLiderGym().size()));
     }
 
-    // Build world
     world = GeneradorMapa::generarMundo("data/mapa.txt");
-    log.log("[Init] Lugares en el mundo: " + std::to_string(world.getLugares().size()));
+    log.log("Lugares en el mundo: " + std::to_string(world.getLugares().size()));
 
     // Set up objectives
     objetivos.emplace_back("Conseguir 3 medallas de gimnasio");
@@ -76,8 +85,8 @@ void Game::inicializar() {
     jugador = Jugador("Ash");
     elegirStarter();
 
-    log.log("[Init] Simulacion lista. Comenzando aventura...");
-    log.log("========================================\n");
+    log.log("Datos cargados. Comenzando aventura...");
+    log.log("");
 }
 
 void Game::procesarLugar(Lugar* lugar) {
@@ -122,13 +131,9 @@ void Game::procesarLugar(Lugar* lugar) {
                 evento = new EventoTesoro(items[idx]);
             }
             break;
-        case TipoEvento::TRAP: {
-            // Trap deals direct damage to active pokemon
-            log.log("[Trampa] Caiste en una trampa! Tu Pokemon activo recibe 10 de danno.");
-            Pokemon* activo = jugador.getPokemonActiv();
-            if (activo) activo->dannioRecibido(10);
+        case TipoEvento::TRAP:
+            evento = new EventoAtrapar(10);
             break;
-        }
         case TipoEvento::NPC:
             evento = new EventoNPC("Hola entrenador! Sigue adelante, la Liga te espera.");
             break;
@@ -229,11 +234,10 @@ void Game::correr() {
     Logger& log = Logger::getInstancia();
     const auto& lugares = world.getLugares();
     if (lugares.empty()) {
-        log.log("[Error] El mundo no tiene lugares. Verifica data/mapa.txt");
+        log.log("El mundo no tiene lugares. Verifica data/mapa.txt");
         return;
     }
 
-    // Traverse all locations in order
     for (int i = 0; i < (int)lugares.size() && !muerto; i++) {
         procesarLugar(lugares[i]);
         revisarDerrota();
