@@ -2,6 +2,7 @@
 #define PROYECTO_2_SPACE_H
 #include <string>
 #include <vector>
+using namespace std;
 
 // Clase base abstracta para cualquier lugar del mundo
 // Lugar hereda de esta clase
