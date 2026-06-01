@@ -7,7 +7,7 @@ EspeciePokemon::EspeciePokemon()
       nivelEvolucion(0), nombreEvolucion("NADA"), rareza(Rareza::COMMON) {
 }
 
-// Constructor con todos los datos de la especie
+// Constructor con los datos completos de la especie
 EspeciePokemon::EspeciePokemon(const string& nombre, TipoPokemon tipo, int hpBase,
                                int ataqueBase, int defensaBase, int nivelEvolucion,
                                const string& nombreEvolucion, Rareza rareza) {

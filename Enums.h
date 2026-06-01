@@ -17,7 +17,7 @@ enum class TipoEvento {
     WILD_POKEMON,    // aparece un pokemon salvaje
     TRAINER,         // batalla contra un entrenador
     SHOP,            // tienda de objetos
-    POKEMON_CENTER,  // cura a todos los pokemon
+    POKEMON_CENTER,  // cura a los pokemon del equipo
     TREASURE,        // encontras un item gratis
     TRAP,            // trampa que hace danno
     NPC,             // personaje que da un mensaje

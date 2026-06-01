@@ -39,7 +39,7 @@ Pokemon* Jugador::getPokemonActiv() {
     for (int i = 0; i < (int)equipo.size(); i++) {
         if (!equipo[i].estaMuerto()) return &equipo[i];
     }
-    return nullptr; // todos debilitados
+    return nullptr; // equipo completamente debilitado
 }
 
 bool Jugador::tienePokemonVivo() const {
@@ -66,7 +66,7 @@ void Jugador::agregarMedalla() {
     medallas++;
 }
 
-// Cura todos los pokemon del equipo al maximo
+// Cura el equipo completo al maximo de HP
 void Jugador::curarEquipo() {
     for (int i = 0; i < (int)equipo.size(); i++) {
         equipo[i].curarFull();

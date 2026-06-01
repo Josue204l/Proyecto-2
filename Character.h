@@ -7,7 +7,7 @@
 class Character {
 public:
     virtual ~Character() = default;
-    virtual string getNombre() = 0; // todo personaje debe tener nombre
+    virtual string getNombre() = 0; // cada personaje debe tener nombre
 };
 
 #endif // PROYECTO_2_CHARACTER_H

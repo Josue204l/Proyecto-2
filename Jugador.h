@@ -40,7 +40,7 @@ public:
     bool gastarPlata(int cantidad);
 
     void agregarMedalla();
-    void curarEquipo(); // cura todos los pokemon del equipo
+    void curarEquipo(); // cura el equipo completo
 };
 
 #endif // PROYECTO_2_JUGADOR_H

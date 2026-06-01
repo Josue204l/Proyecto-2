@@ -168,7 +168,7 @@ void Game::revisarVictoria() {
 void Game::revisarDerrota() {
     if (!jugador.tienePokemonVivo()) {
         muerto = true;
-        Logger::getInstancia().log("\n[!] Todos tus Pokemon han caido. Fin de la aventura.");
+        Logger::getInstancia().log("\n[!] Tu equipo ha caido. Fin de la aventura.");
     }
 }
 
