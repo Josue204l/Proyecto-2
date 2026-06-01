@@ -19,7 +19,52 @@ add_executable(Proyecto_2 main.cpp
         Item.h
         Obstacle.cpp
         Obstacle.h
-        Event.cpp
-        Event.h
         FileLoader.cpp
-        FileLoader.h)
+        FileLoader.h
+        Enums.h
+        EspeciePokemon.cpp
+        EspeciePokemon.h
+        Pokemon.cpp
+        Pokemon.h
+        Inventario.cpp
+        Inventario.h
+        Jugador.cpp
+        Jugador.h
+        Entrenador.cpp
+        Entrenador.h
+        Evento.cpp
+        Evento.h
+        EventoPokemonSalvaje.cpp
+        EventoPokemonSalvaje.h
+        EventoBatallaEntrenador.cpp
+        EventoBatallaEntrenador.h
+        EventoTiendaObjetos.cpp
+        EventoTiendaObjetos.h
+        EventoCentroPokemon.cpp
+        EventoCentroPokemon.h
+        EventoTesoro.cpp
+        EventoTesoro.h
+        EventoAtrapar.cpp
+        EventoAtrapar.h
+        EventoNPC.cpp
+        EventoNPC.h
+        EventoGimnasio.cpp
+        EventoGimnasio.h
+        PeleaStrategy.cpp
+        PeleaStrategy.h
+        AgresivaStrategy.cpp
+        AgresivaStrategy.h
+        DefensaStrategy.cpp
+        DefensaStrategy.h
+        RandomStrategy.cpp
+        RandomStrategy.h
+        Pelea.cpp
+        Pelea.h
+        Lugar.cpp
+        Lugar.h
+        GeneradorMapa.cpp
+        GeneradorMapa.h
+        PokemonFactory.cpp
+        PokemonFactory.h
+        Game.cpp
+        Game.h)

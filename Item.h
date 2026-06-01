@@ -4,9 +4,23 @@
 
 #ifndef PROYECTO_2_ITEM_H
 #define PROYECTO_2_ITEM_H
+#include <string>
+
+#include "Enums.h"
 
 
 class Item {
+    private:
+    std::string nombre;
+    TipoItem tipo;
+    int valor;
+    public:
+    Item();
+    Item(std::string nombre, TipoItem tipo, int valor);
+    std::string getNombre();
+    TipoItem getTipo();
+    int getValor();
+
 };
 
 
