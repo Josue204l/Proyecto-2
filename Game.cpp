@@ -238,9 +238,34 @@ void Game::correr() {
         return;
     }
 
-    for (int i = 0; i < (int)lugares.size() && !muerto; i++) {
-        procesarLugar(lugares[i]);
+    // Empieza en el primer lugar
+    Lugar* actual = lugares[0];
+
+    while (!muerto && actual != nullptr) {
+        procesarLugar(actual);
         revisarDerrota();
+        if (muerto) break;
+
+        const auto& conexiones = actual->getSiguienteLugar();
+        if (conexiones.empty()) break; // fin del mundo
+
+        // Muestra opciones de movimiento
+        cout << "\n=== A donde quieres ir? ===" << endl;
+        vector<Lugar*> opciones;
+        for (int id : conexiones) {
+            Lugar* sig = world.getLugar(id);
+            if (sig) opciones.push_back(sig);
+        }
+        for (int i = 0; i < (int)opciones.size(); i++) {
+            cout << "  [" << (i+1) << "] " << opciones[i]->getNombre() << endl;
+        }
+
+        int elec = 0;
+        while (elec < 1 || elec > (int)opciones.size()) {
+            cout << "Tu eleccion: ";
+            cin >> elec;
+        }
+        actual = opciones[elec - 1];
     }
 
     revisarVictoria();
