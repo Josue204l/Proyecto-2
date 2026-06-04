@@ -1,23 +1,20 @@
 # Archivo de especies Pokemon
 # Formato: nombre,tipo,hpBase,ataqueBase,defensaBase,nivelEvolucion,nombreEvolucion,rareza
-# Tipos validos: NORMAL, FIRE, WATER, GRASS, ELECTRIC, ROCK, FLYING
-# Rareza valida: COMMON, RARE, EPIC, LEGENDARY
-# Si no evoluciona usar: NADA como nombreEvolucion y 0 como nivelEvolucion
 
-Bulbasaur,GRASS,45,49,49,16,Ivysaur,COMMON
-Ivysaur,GRASS,60,62,63,32,Venusaur,RARE
-Venusaur,GRASS,80,82,83,0,NADA,EPIC
-Charmander,FIRE,39,52,43,16,Charmeleon,COMMON
-Charmeleon,FIRE,58,64,58,36,Charizard,RARE
-Charizard,FIRE,78,84,78,0,NADA,EPIC
-Squirtle,WATER,44,48,65,16,Wartortle,COMMON
-Wartortle,WATER,59,63,80,36,Blastoise,RARE
-Blastoise,WATER,79,83,100,0,NADA,EPIC
-Pikachu,ELECTRIC,35,55,40,0,NADA,RARE
-Raichu,ELECTRIC,60,90,55,0,NADA,EPIC
-Geodude,ROCK,40,80,100,25,Graveler,COMMON
-Graveler,ROCK,55,95,115,0,NADA,RARE
-Pidgey,FLYING,40,45,40,18,Pidgeotto,COMMON
-Pidgeotto,FLYING,63,60,55,36,Pidgeot,RARE
-Pidgeot,FLYING,83,80,75,0,NADA,EPIC
-Mewtwo,NORMAL,106,110,90,0,NADA,LEGENDARY
+Bulbasaur,GRASS,25,20,20,16,Ivysaur,COMMON
+Ivysaur,GRASS,35,28,28,32,Venusaur,RARE
+Venusaur,GRASS,50,38,38,0,NADA,EPIC
+Charmander,FIRE,22,22,18,16,Charmeleon,COMMON
+Charmeleon,FIRE,32,30,25,36,Charizard,RARE
+Charizard,FIRE,45,40,35,0,NADA,EPIC
+Squirtle,WATER,24,20,28,16,Wartortle,COMMON
+Wartortle,WATER,32,26,36,36,Blastoise,RARE
+Blastoise,WATER,45,35,48,0,NADA,EPIC
+Pikachu,ELECTRIC,20,25,18,0,NADA,RARE
+Raichu,ELECTRIC,35,42,25,0,NADA,EPIC
+Geodude,ROCK,22,35,45,25,Graveler,RARE
+Graveler,ROCK,30,42,52,0,NADA,EPIC
+Pidgey,FLYING,22,20,18,18,Pidgeotto,COMMON
+Pidgeotto,FLYING,32,28,25,36,Pidgeot,RARE
+Pidgeot,FLYING,45,38,35,0,NADA,EPIC
+Mewtwo,NORMAL,60,55,45,0,NADA,LEGENDARY

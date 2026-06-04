@@ -9,6 +9,6 @@
 EventoPokemonSalvaje::EventoPokemonSalvaje(const Pokemon& p) : p(p) {}
 
 void EventoPokemonSalvaje::ejecutar(Jugador& jugador) {
-    Logger::getInstancia().log("[Evento] Aparece un Pokemon salvaje: " + p.getNombre() + " (Nivel " + std::to_string(p.getNivel()) + ")");
+    Logger::getInstancia().log("[Evento] ¡Aparece un Pokémon salvaje: " + p.getNombre() + " (Nivel " + std::to_string(p.getNivel()) + ")!");
     Pelea::empezarBatallaSalvaje(jugador, p);
 }
