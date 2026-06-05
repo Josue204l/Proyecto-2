@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.1)
+cmake_minimum_required(VERSION 3.10)
 project(Proyecto_2)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -6,8 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(Proyecto_2 main.cpp
         World.cpp
         World.h
-        space.cpp
-        space.h
+        Space.cpp
+        Space.h
         Objective.cpp
         Objective.h
         Logger.cpp

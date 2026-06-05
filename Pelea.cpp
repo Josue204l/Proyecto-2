@@ -132,7 +132,6 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
         if (accion == 1) {
             int d = calcularDannio(*juga.getPokemon(idx), pokemonSalvaje);
             pokemonSalvaje.dannioRecibido(d);
-            cout << "  " << juga.getPokemon(idx)->getNombre() << " ataca por " << d << " de daño." << endl;
             log.log("  " + juga.getPokemon(idx)->getNombre() + " ataca por " + to_string(d) + " de daño.");
             if (pokemonSalvaje.estaMuerto()) {
                 victoria = true;
@@ -164,11 +163,10 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
         if (enemigoContraataca) {
             int d = calcularDannio(pokemonSalvaje, *juga.getPokemon(idx));
             juga.getPokemon(idx)->dannioRecibido(d);
-            cout << "  " << pokemonSalvaje.getNombre() << " ataca por " << d << " de daño." << endl;
             log.log("  " + pokemonSalvaje.getNombre() + " ataca por " + to_string(d) + " de daño.");
 
             if (juga.getPokemon(idx)->estaMuerto()) {
-                cout << "  ¡" << juga.getPokemon(idx)->getNombre() << " fue debilitado!" << endl;
+                log.log("  ¡" + juga.getPokemon(idx)->getNombre() + " fue debilitado!");
                 // busca sustituto
                 int nuevoIdx = -1;
                 for (int i = 0; i < juga.getTamano(); i++)
@@ -196,11 +194,9 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
             if (!juga.getPokemon(i)->estaMuerto()) {
                 int exp = pokemonSalvaje.getNivel() * 50;
                 juga.getPokemon(i)->ganarExperiencia(exp);
-                cout << "  " << juga.getPokemon(i)->getNombre() << " ganó " << exp << " de experiencia." << endl;
                 log.log("  " + juga.getPokemon(i)->getNombre() + " ganó " + to_string(exp) + " de experiencia.");
                 if (juga.getPokemon(i)->puedeEvolucionar()) {
-                    cout << "  ¡" << juga.getPokemon(i)->getNombre() << " puede evolucionar!" << endl;
-                    log.log("  " + juga.getPokemon(i)->getNombre() + " puede evolucionar!");
+                    log.log("  ¡" + juga.getPokemon(i)->getNombre() + " puede evolucionar!");
                 }
                 break;
             }
@@ -245,15 +241,13 @@ bool Pelea::empezarBatallaEntrenador(Jugador& juga, Entrenador entrenador) {
         } else {
             int d = calcularDannio(*juga.getPokemon(idx), enemigo);
             enemigo.dannioRecibido(d);
-            cout << "  " << juga.getPokemon(idx)->getNombre() << " ataca por " << d << " de daño." << endl;
             log.log("  " + juga.getPokemon(idx)->getNombre() + " ataca por " + to_string(d) + " de daño.");
             if (enemigo.estaMuerto()) {
                 int exp = enemigo.getNivel() * 50;
                 juga.getPokemon(idx)->ganarExperiencia(exp);
-                cout << "  " << juga.getPokemon(idx)->getNombre() << " ganó " << exp << " exp." << endl;
                 log.log("  " + juga.getPokemon(idx)->getNombre() + " ganó " + to_string(exp) + " exp.");
                 if (juga.getPokemon(idx)->puedeEvolucionar()) {
-                    cout << "  ¡" << juga.getPokemon(idx)->getNombre() << " puede evolucionar!" << endl;
+                    log.log("  ¡" + juga.getPokemon(idx)->getNombre() + " puede evolucionar!");
                 }
                 enemigoIdx++;
                 enemigoContraataca = false;
@@ -264,11 +258,10 @@ bool Pelea::empezarBatallaEntrenador(Jugador& juga, Entrenador entrenador) {
 
         int d = calcularDannio(enemigo, *juga.getPokemon(idx));
         juga.getPokemon(idx)->dannioRecibido(d);
-        cout << "  " << enemigo.getNombre() << " ataca por " << d << " de daño." << endl;
         log.log("  " + enemigo.getNombre() + " ataca por " + to_string(d) + " de daño.");
 
         if (juga.getPokemon(idx)->estaMuerto()) {
-            cout << "  ¡" << juga.getPokemon(idx)->getNombre() << " fue debilitado!" << endl;
+            log.log("  ¡" + juga.getPokemon(idx)->getNombre() + " fue debilitado!");
             int nuevoIdx = -1;
             for (int i = 0; i < juga.getTamano(); i++)
                 if (!juga.getPokemon(i)->estaMuerto() && i != idx) { nuevoIdx = i; break; }
@@ -284,14 +277,12 @@ bool Pelea::empezarBatallaEntrenador(Jugador& juga, Entrenador entrenador) {
                 cin >> sig;
             }
             log.log("  " + juga.getNombre() + " envía a " + juga.getPokemon(sig-1)->getNombre() + "!");
-            cout << "  ¡Vas con " << juga.getPokemon(sig-1)->getNombre() << "!" << endl;
         }
     }
 
     bool victoria = juga.tienePokemonVivo();
     if (victoria) {
         juga.agregarPlata(entrenador.getPlataGanada());
-        cout << "  ¡Victoria! Ganaste " << entrenador.getPlataGanada() << " monedas." << endl;
         log.log("  ¡Victoria! Ganaste " + to_string(entrenador.getPlataGanada()) + " monedas.");
     } else {
         log.log("  Derrota contra el entrenador " + entrenador.getNombre() + ".");

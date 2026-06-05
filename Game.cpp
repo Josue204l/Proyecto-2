@@ -18,6 +18,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <memory>
 using namespace std;
 
 Game::Game() : ubicacionActual(0), muerto(false) {}
@@ -91,7 +92,7 @@ void Game::procesarLugar(Lugar* lugar) {
     const auto& items    = loader.getItems();
     const auto& lideres  = loader.getLiderGym();
 
-    Evento* evento = nullptr;
+    unique_ptr<Evento> evento = nullptr;
 
     switch (lugar->getTipoEvento()) {
         case TipoEvento::WILD_POKEMON:
@@ -99,7 +100,7 @@ void Game::procesarLugar(Lugar* lugar) {
                 // nivel escala con la zona: id/2 + 3, con algo de aleatoriedad
                 int nivelZona = 3 + (lugar->getId() / 2) + rand() % 3;
                 Pokemon salvaje = PokemonFactory::crearPokeRandom(especies, nivelZona);
-                evento = new EventoPokemonSalvaje(salvaje);
+                evento = make_unique<EventoPokemonSalvaje>(salvaje);
             }
             break;
         case TipoEvento::TRAINER: {
@@ -114,41 +115,41 @@ void Game::procesarLugar(Lugar* lugar) {
                     ent.addPokemon(p2);
                 }
             }
-            evento = new EventoBatallaEntrenador(ent);
+            evento = make_unique<EventoBatallaEntrenador>(ent);
             break;
         }
         case TipoEvento::SHOP:
             if (!items.empty()) {
-                evento = new EventoTiendaObjetos(items);
+                evento = make_unique<EventoTiendaObjetos>(items);
             }
             break;
         case TipoEvento::POKEMON_CENTER:
-            evento = new EventoCentroPokemon();
+            evento = make_unique<EventoCentroPokemon>();
             break;
         case TipoEvento::TREASURE:
             if (!items.empty()) {
                 int idx = rand() % (int)items.size();
-                evento = new EventoTesoro(items[idx]);
+                evento = make_unique<EventoTesoro>(items[idx]);
             }
             break;
         case TipoEvento::TRAP:
-            evento = new EventoAtrapar(10);
+            evento = make_unique<EventoAtrapar>(10);
             break;
         case TipoEvento::NPC:
-            evento = new EventoNPC("¡Hola entrenador! Sigue adelante, la Liga te espera.");
+            evento = make_unique<EventoNPC>("¡Hola entrenador! Sigue adelante, la Liga te espera.");
             break;
         case TipoEvento::GYM: {
             int idx = jugador.getMedallas();
             if (!lideres.empty()) {
                 idx = idx % (int)lideres.size();
-                evento = new EventoGimnasio(lideres[idx]);
+                evento = make_unique<EventoGimnasio>(lideres[idx]);
             }
             break;
         }
         case TipoEvento::LEAGUE: {
             log.log("[Liga] ¡Has llegado a la Liga Pokémon! ¡Batalla final!");
             if (!lideres.empty()) {
-                evento = new EventoGimnasio(lideres.back());
+                evento = make_unique<EventoGimnasio>(lideres.back());
             }
             break;
         }
@@ -156,7 +157,6 @@ void Game::procesarLugar(Lugar* lugar) {
 
     if (evento) {
         evento->ejecutar(jugador);
-        delete evento;
     }
 }
 
