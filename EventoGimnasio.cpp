@@ -9,10 +9,10 @@
 EventoGimnasio::EventoGimnasio(const Entrenador& lider) : liderGym(lider) {}
 
 void EventoGimnasio::ejecutar(Jugador& juga) {
-    Logger::getInstancia().log("[Gimnasio] Lider " + liderGym.getNombre() + " acepta tu desafio!");
+    Logger::getInstancia().log("[Gimnasio] ¡Líder " + liderGym.getNombre() + " acepta tu desafío!");
     bool gano = Pelea::empezarBatallaEntrenador(juga, liderGym);
     if (gano) {
         juga.agregarMedalla();
-        Logger::getInstancia().log("[Gimnasio] Obtuviste una medalla! Total: " + std::to_string(juga.getMedallas()));
+        Logger::getInstancia().log("[Gimnasio] ¡Obtuviste una medalla! Total: " + std::to_string(juga.getMedallas()));
     }
 }

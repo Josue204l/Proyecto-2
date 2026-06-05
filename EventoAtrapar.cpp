@@ -9,9 +9,8 @@ EventoAtrapar::EventoAtrapar(int dannio) {
     this->dannio = dannio;
 }
 
-// Trampa: hace danno directo al pokemon activo del jugador
 void EventoAtrapar::ejecutar(Jugador& juga) {
-    Logger::getInstancia().log("[Trampa] Caiste en una trampa! Recibes " + std::to_string(dannio) + " de danno.");
+    Logger::getInstancia().log("[Trampa] ¡Caíste en una trampa! Recibes " + std::to_string(dannio) + " de daño.");
     Pokemon* activo = juga.getPokemonActiv();
     if (activo) {
         activo->dannioRecibido(dannio);

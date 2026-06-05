@@ -8,7 +8,7 @@
 EventoCentroPokemon::EventoCentroPokemon() {}
 
 void EventoCentroPokemon::ejecutar(Jugador& jug) {
-    Logger::getInstancia().log("[Centro Pokemon] Bienvenido! Curamos a tu equipo.");
+    Logger::getInstancia().log("[Centro Pokémon] ¡Bienvenido! Curamos a tu equipo.");
     jug.curarEquipo();
-    Logger::getInstancia().log("[Centro Pokemon] Tu equipo esta completamente curado.");
+    Logger::getInstancia().log("[Centro Pokémon] Tu equipo está completamente curado.");
 }
