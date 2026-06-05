@@ -10,9 +10,11 @@
 class EventoPokemonSalvaje : public Evento{
     private:
     Pokemon p;
+    bool intentarCaptura(Jugador& juga, Pokemon& salvaje);
     public:
     EventoPokemonSalvaje(const Pokemon &p);
     void ejecutar(Jugador& jugador)override;
+
 };
 
 

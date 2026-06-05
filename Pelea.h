@@ -15,6 +15,7 @@ private:
     public:
     static bool empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje);
     static bool empezarBatallaEntrenador(Jugador& juga, Entrenador entrenador);
+    static int seleccionarPokemon(Jugador& juga );
 };
 
 

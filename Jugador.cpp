@@ -72,3 +72,7 @@ void Jugador::curarEquipo() {
         equipo[i].curarFull();
     }
 }
+
+bool Jugador::equipoLleno() const {
+    return equipo.size() >= 6;
+}

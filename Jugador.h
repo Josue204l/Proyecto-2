@@ -15,7 +15,6 @@ private:
     Inventario inventario;
     int plata;     // monedas del jugador
     int medallas;  // medallas de gimnasio ganadas
-
 public:
     Jugador();
     Jugador(string nombre);
@@ -41,6 +40,7 @@ public:
 
     void agregarMedalla();
     void curarEquipo(); // cura el equipo completo
+    bool equipoLleno() const;
 };
 
 #endif // PROYECTO_2_JUGADOR_H

@@ -1,11 +1,15 @@
 # Archivo de lideres de gimnasio
 # Formato: nombre,plataGanada,pokemon1:nivel1,pokemon2:nivel2,...
-# Los nombres de pokemon deben coincidir exactamente con los de especies.txt
+# Niveles ajustados para que el jugador llegue al nivel correcto tras las batallas previas
 
-Brock,300,Geodude:12,Graveler:14
-Misty,350,Squirtle:15,Wartortle:18
-Lt. Surge,400,Pikachu:20,Raichu:22
-Erika,450,Bulbasaur:22,Ivysaur:24
-Koga,500,Pidgey:25,Pidgeotto:27
-Blaine,550,Charmander:28,Charmeleon:30
-Giovanni,700,Geodude:30,Raichu:32,Charizard:35
+# Zona 1: jugador llega ~nivel 8-10 tras 2 batallas
+Brock,300,Geodude:8,Graveler:10
+
+# Zona 2: jugador llega ~nivel 13-15 tras 2 batallas mas
+Misty,400,Squirtle:13,Wartortle:15
+
+# Zona 3: jugador llega ~nivel 18-20
+Lt. Surge,500,Pikachu:18,Raichu:20
+
+# Liga: jugador llega ~nivel 28-32 tras toda la ruta final
+Giovanni,800,Geodude:28,Raichu:30,Charizard:33

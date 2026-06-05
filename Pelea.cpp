@@ -1,103 +1,115 @@
-//
-// Created by Gabri on 5/31/26.
-//
-
 #include "Pelea.h"
 #include "Logger.h"
 #include <string>
+#include <iostream>
+using namespace std;
 
 double Pelea::getMultiplicadorTipo(TipoPokemon atacante, TipoPokemon defensor) {
-    // Fire > Grass, Water > Fire, Grass > Water, Electric > Water/Flying, Rock > Flying
-    if (atacante == TipoPokemon::FIRE   && defensor == TipoPokemon::GRASS)    return 2.0;
-    if (atacante == TipoPokemon::WATER  && defensor == TipoPokemon::FIRE)     return 2.0;
-    if (atacante == TipoPokemon::GRASS  && defensor == TipoPokemon::WATER)    return 2.0;
-    if (atacante == TipoPokemon::ELECTRIC && defensor == TipoPokemon::WATER)  return 2.0;
-    if (atacante == TipoPokemon::ELECTRIC && defensor == TipoPokemon::FLYING) return 2.0;
-    if (atacante == TipoPokemon::ROCK   && defensor == TipoPokemon::FLYING)   return 2.0;
-    if (atacante == TipoPokemon::FIRE   && defensor == TipoPokemon::WATER)    return 0.5;
-    if (atacante == TipoPokemon::GRASS  && defensor == TipoPokemon::FIRE)     return 0.5;
-    if (atacante == TipoPokemon::WATER  && defensor == TipoPokemon::GRASS)    return 0.5;
+    if (atacante == TipoPokemon::FIRE    && defensor == TipoPokemon::GRASS)    return 2.0;
+    if (atacante == TipoPokemon::WATER   && defensor == TipoPokemon::FIRE)     return 2.0;
+    if (atacante == TipoPokemon::GRASS   && defensor == TipoPokemon::WATER)    return 2.0;
+    if (atacante == TipoPokemon::ELECTRIC && defensor == TipoPokemon::WATER)   return 2.0;
+    if (atacante == TipoPokemon::ELECTRIC && defensor == TipoPokemon::FLYING)  return 2.0;
+    if (atacante == TipoPokemon::ROCK    && defensor == TipoPokemon::FLYING)   return 2.0;
+    if (atacante == TipoPokemon::FIRE    && defensor == TipoPokemon::WATER)    return 0.5;
+    if (atacante == TipoPokemon::GRASS   && defensor == TipoPokemon::FIRE)     return 0.5;
+    if (atacante == TipoPokemon::WATER   && defensor == TipoPokemon::GRASS)    return 0.5;
+    if (atacante == TipoPokemon::GRASS   && defensor == TipoPokemon::ROCK)     return 0.5;
+    if (atacante == TipoPokemon::ROCK    && defensor == TipoPokemon::WATER)    return 0.5;
     return 1.0;
 }
 
 int Pelea::calcularDannio(const Pokemon& atacante, const Pokemon& defensor) {
     double mult = getMultiplicadorTipo(atacante.getTipoPokemon(), defensor.getTipoPokemon());
-    int base = atacante.getAtaque() - (defensor.getDefensa() / 2);
-    if (base < 1) base = 1;
-    return (int)(base * mult);
+    // Damage formula balanced so fights last several turns at equal level
+    // Balanced formula: fights last 5-8 turns at similar levels
+    int base = atacante.getAtaque() / 4 - defensor.getDefensa() / 8;
+    if (base < 2) base = 2;
+    int dannio = (int)(base * mult);
+    // Small random variance +-15%
+    int varianza = max(1, dannio / 6);
+    dannio = dannio - varianza + (rand() % (varianza * 2 + 1));
+    if (dannio < 1) dannio = 1;
+    return dannio;
 }
 
+// Fully automatic wild battle — no cin
 bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
     Logger& log = Logger::getInstancia();
 
-    // Busca el indice del primer pokemon vivo
     int activoIdx = -1;
     for (int i = 0; i < juga.getTamano(); i++) {
         if (!juga.getPokemon(i)->estaMuerto()) { activoIdx = i; break; }
     }
     if (activoIdx == -1) return false;
 
-    log.log("  [Batalla] " + juga.getPokemon(activoIdx)->getNombre() + " vs " + pokemonSalvaje.getNombre() + " (salvaje)");
+    log.log("[Batalla] " + juga.getPokemon(activoIdx)->getNombre()
+            + " (Nv." + to_string(juga.getPokemon(activoIdx)->getNivel()) + ")"
+            + " vs " + pokemonSalvaje.getNombre()
+            + " (Nv." + to_string(pokemonSalvaje.getNivel()) + ")");
 
-    while (true) {
-        // Turno del jugador: ataca
+    int turno = 0;
+    while (!pokemonSalvaje.estaMuerto()) {
+        turno++;
+
+        // Player attacks
         int dannoJugador = calcularDannio(*juga.getPokemon(activoIdx), pokemonSalvaje);
         pokemonSalvaje.dannioRecibido(dannoJugador);
-        log.log("  " + juga.getPokemon(activoIdx)->getNombre() + " ataca por " + std::to_string(dannoJugador) + " de danno.");
+        log.log("  Turno " + to_string(turno) + ": "
+                + juga.getPokemon(activoIdx)->getNombre()
+                + " ataca por " + to_string(dannoJugador) + " danno."
+                + " (rival HP: " + to_string(pokemonSalvaje.getHpActual()) + "/" + to_string(pokemonSalvaje.getHPMAX()) + ")");
 
         if (pokemonSalvaje.estaMuerto()) break;
 
-        // Turno del enemigo: contraataca
+        // Enemy attacks
         int dannoEnemigo = calcularDannio(pokemonSalvaje, *juga.getPokemon(activoIdx));
         juga.getPokemon(activoIdx)->dannioRecibido(dannoEnemigo);
-        log.log("  " + pokemonSalvaje.getNombre() + " contraataca por " + std::to_string(dannoEnemigo) + " de danno.");
+        log.log("  Turno " + to_string(turno) + ": "
+                + pokemonSalvaje.getNombre()
+                + " contraataca por " + to_string(dannoEnemigo) + " danno."
+                + " (tuyo HP: " + to_string(juga.getPokemon(activoIdx)->getHpActual()) + "/" + to_string(juga.getPokemon(activoIdx)->getHPMAX()) + ")");
 
-        // Si el pokemon activo cayo, busca el siguiente vivo
         if (juga.getPokemon(activoIdx)->estaMuerto()) {
+            log.log("  " + juga.getPokemon(activoIdx)->getNombre() + " fue debilitado.");
+            // Switch to next alive pokemon
             activoIdx = -1;
             for (int i = 0; i < juga.getTamano(); i++) {
                 if (!juga.getPokemon(i)->estaMuerto()) { activoIdx = i; break; }
             }
             if (activoIdx == -1) break;
-            log.log("  " + juga.getNombre() + " envia a " + juga.getPokemon(activoIdx)->getNombre() + "!");
+            log.log("  Adelante " + juga.getPokemon(activoIdx)->getNombre() + "!");
         }
     }
 
     bool victoria = pokemonSalvaje.estaMuerto();
     if (victoria) {
-        log.log("  Resultado: Victoria! " + pokemonSalvaje.getNombre() + " fue derrotado.");
-        // busca de nuevo el activo por indice tras posible realloc
-        for (int i = 0; i < juga.getTamano(); i++) {
-            if (!juga.getPokemon(i)->estaMuerto()) {
-                int exp = pokemonSalvaje.getNivel() * 50;
-                juga.getPokemon(i)->ganarExperiencia(exp);
-                log.log("  " + juga.getPokemon(i)->getNombre() + " gano " + std::to_string(exp) + " de experiencia.");
-                if (juga.getPokemon(i)->puedeEvolucionar())
-                    log.log("  " + juga.getPokemon(i)->getNombre() + " puede evolucionar!");
-                break;
-            }
-        }
+        log.log("  Victoria! " + juga.getPokemon(activoIdx)->getNombre() + " gano la batalla.");
+        int exp = pokemonSalvaje.getNivel() * 50;
+        juga.getPokemon(activoIdx)->ganarExperiencia(exp);
+        log.log("  " + juga.getPokemon(activoIdx)->getNombre() + " gano " + to_string(exp) + " EXP.");
     } else {
-        log.log("  Resultado: Derrota. El jugador perdio la batalla.");
+        log.log("  Derrota en batalla salvaje.");
     }
     return victoria;
 }
 
+// Fully automatic trainer battle with proper turn loop
 bool Pelea::empezarBatallaEntrenador(Jugador& juga, Entrenador entrenador) {
     Logger& log = Logger::getInstancia();
-    log.log("  [Batalla vs Entrenador] " + juga.getNombre() + " vs " + entrenador.getNombre());
+    log.log("[Batalla] " + juga.getNombre() + " vs " + entrenador.getNombre());
 
     int enemigoIdx = 0;
-
     while (enemigoIdx < (int)entrenador.getEquipo().size()) {
-        // Busca el pokemon activo del jugador por indice
+
+        // Find active player pokemon
         int activoIdx = -1;
         for (int i = 0; i < juga.getTamano(); i++) {
             if (!juga.getPokemon(i)->estaMuerto()) { activoIdx = i; break; }
         }
-        if (activoIdx == -1) break; // jugador sin pokemon vivos
+        if (activoIdx == -1) break;
 
-        // Avanza al siguiente enemigo vivo
+        // Advance to next alive enemy
         while (enemigoIdx < (int)entrenador.getEquipo().size() &&
                entrenador.getPokemon(enemigoIdx).estaMuerto()) {
             enemigoIdx++;
@@ -105,33 +117,66 @@ bool Pelea::empezarBatallaEntrenador(Jugador& juga, Entrenador entrenador) {
         if (enemigoIdx >= (int)entrenador.getEquipo().size()) break;
 
         Pokemon& enemigo = entrenador.getPokemon(enemigoIdx);
-        log.log("  " + juga.getPokemon(activoIdx)->getNombre() + " vs " + enemigo.getNombre());
+        log.log("  " + juga.getPokemon(activoIdx)->getNombre()
+                + " (Nv." + to_string(juga.getPokemon(activoIdx)->getNivel()) + ")"
+                + " vs " + enemigo.getNombre()
+                + " (Nv." + to_string(enemigo.getNivel()) + ")");
 
-        // Turno del jugador: ataca
-        int dannoJugador = calcularDannio(*juga.getPokemon(activoIdx), enemigo);
-        enemigo.dannioRecibido(dannoJugador);
-        log.log("  " + juga.getPokemon(activoIdx)->getNombre() + " ataca por " + std::to_string(dannoJugador) + " de danno.");
+        // Full turn loop for this matchup
+        int turno = 0;
+        while (!enemigo.estaMuerto() && !juga.getPokemon(activoIdx)->estaMuerto()) {
+            turno++;
+
+            // Player attacks first
+            int dannoJugador = calcularDannio(*juga.getPokemon(activoIdx), enemigo);
+            enemigo.dannioRecibido(dannoJugador);
+            log.log("    Turno " + to_string(turno) + ": "
+                    + juga.getPokemon(activoIdx)->getNombre()
+                    + " ataca por " + to_string(dannoJugador) + "."
+                    + " Rival HP: " + to_string(enemigo.getHpActual()) + "/" + to_string(enemigo.getHPMAX()));
+
+            if (enemigo.estaMuerto()) break;
+
+            // Enemy attacks back
+            int dannoEnemigo = calcularDannio(enemigo, *juga.getPokemon(activoIdx));
+            juga.getPokemon(activoIdx)->dannioRecibido(dannoEnemigo);
+            log.log("    Turno " + to_string(turno) + ": "
+                    + enemigo.getNombre()
+                    + " contraataca por " + to_string(dannoEnemigo) + "."
+                    + " Tu HP: " + to_string(juga.getPokemon(activoIdx)->getHpActual()) + "/" + to_string(juga.getPokemon(activoIdx)->getHPMAX()));
+        }
 
         if (enemigo.estaMuerto()) {
             int exp = enemigo.getNivel() * 50;
             juga.getPokemon(activoIdx)->ganarExperiencia(exp);
-            log.log("  " + juga.getPokemon(activoIdx)->getNombre() + " gano " + std::to_string(exp) + " exp.");
+            log.log("  " + juga.getPokemon(activoIdx)->getNombre() + " gano " + to_string(exp) + " exp.");
             enemigoIdx++;
-            continue;
+        } else {
+            // Player's pokemon fainted — switch to next
+            log.log("  " + juga.getPokemon(activoIdx)->getNombre() + " fue debilitado.");
+            activoIdx = -1;
+            for (int i = 0; i < juga.getTamano(); i++) {
+                if (!juga.getPokemon(i)->estaMuerto()) { activoIdx = i; break; }
+            }
+            if (activoIdx == -1) break;
+            log.log("  Adelante " + juga.getPokemon(activoIdx)->getNombre() + "!");
         }
-
-        // Turno del enemigo: contraataca
-        int dannoEnemigo = calcularDannio(enemigo, *juga.getPokemon(activoIdx));
-        juga.getPokemon(activoIdx)->dannioRecibido(dannoEnemigo);
-        log.log("  " + enemigo.getNombre() + " contraataca por " + std::to_string(dannoEnemigo) + " de danno.");
     }
 
     bool victoria = juga.tienePokemonVivo();
     if (victoria) {
         juga.agregarPlata(entrenador.getPlataGanada());
-        log.log("  Victoria! Ganaste " + std::to_string(entrenador.getPlataGanada()) + " monedas.");
+        log.log("  Victoria! Ganaste " + to_string(entrenador.getPlataGanada()) + " monedas.");
     } else {
-        log.log("  Derrota contra el entrenador " + entrenador.getNombre() + ".");
+        log.log("  Derrota contra " + entrenador.getNombre() + ".");
     }
     return victoria;
+}
+
+int Pelea::seleccionarPokemon(Jugador& jugador) {
+    for (int i = 0; i < jugador.getTamano(); i++) {
+        Pokemon* p = jugador.getPokemon(i);
+        if (!p->estaMuerto()) return i;
+    }
+    return -1;
 }

@@ -1,7 +1,3 @@
-//
-// Created by Gabri on 5/31/26.
-//
-
 #include "Game.h"
 #include "GeneradorMapa.h"
 #include "Logger.h"
@@ -26,30 +22,48 @@ void Game::elegirStarter() {
     Logger& log = Logger::getInstancia();
     const auto& especies = loader.getEspecie();
     if (especies.empty()) {
-        log.log("Error: No hay especies cargadas para elegir starter.");
+        log.log("Error: No hay especies cargadas.");
         return;
     }
 
-    // Muestra los 3 primeros pokemon como opciones de inicio
+    // Show first 3 as starter options
     int opciones = (int)especies.size() < 3 ? (int)especies.size() : 3;
     cout << "\n=== Elige tu Pokemon inicial ===" << endl;
     for (int i = 0; i < opciones; i++) {
         cout << "  [" << (i + 1) << "] " << especies[i].getNombre() << endl;
     }
 
-    // El jugador elige entre 1 y 3
     int eleccion = 0;
     while (eleccion < 1 || eleccion > opciones) {
         cout << "Tu eleccion (1-" << opciones << "): ";
         cin >> eleccion;
-        if (eleccion < 1 || eleccion > opciones) {
-            cout << "Opcion invalida, intenta de nuevo." << endl;
-        }
+        if (eleccion < 1 || eleccion > opciones)
+            cout << "Opcion invalida." << endl;
     }
 
     Pokemon starter = PokemonFactory::crearPoke(especies[eleccion - 1], 5);
     jugador.agregarPokemon(starter);
     log.log("Elegiste a " + starter.getNombre() + " como tu Pokemon inicial!");
+
+    // Give starter items
+    const auto& items = loader.getItems();
+    for (const auto& item : items) {
+        if (const_cast<Item&>(item).getTipo() == TipoItem::POKEBALL) {
+            jugador.getInventario().agregarItem(const_cast<Item&>(item));
+            jugador.getInventario().agregarItem(const_cast<Item&>(item));
+            jugador.getInventario().agregarItem(const_cast<Item&>(item));
+            log.log("Recibiste 3 Pokeballs!");
+            break;
+        }
+    }
+    for (const auto& item : items) {
+        if (const_cast<Item&>(item).getTipo() == TipoItem::POTION) {
+            jugador.getInventario().agregarItem(const_cast<Item&>(item));
+            jugador.getInventario().agregarItem(const_cast<Item&>(item));
+            log.log("Recibiste 2 Pociones!");
+            break;
+        }
+    }
 }
 
 void Game::inicializar() {
@@ -57,41 +71,36 @@ void Game::inicializar() {
     Logger& log = Logger::getInstancia();
     log.log("Iniciando simulacion Pokemon...");
 
-    // Load data files
-    if (!loader.cargarEspecies("data/especies.txt")) {
+    if (!loader.cargarEspecies("data/especies.txt"))
         log.log("Advertencia: No se cargaron especies.");
-    } else {
-        log.log("Especies cargadas: " + std::to_string(loader.getEspecie().size()));
-    }
-    if (!loader.cargarItem("data/items.txt")) {
+    else
+        log.log("Especies cargadas: " + to_string(loader.getEspecie().size()));
+
+    if (!loader.cargarItem("data/items.txt"))
         log.log("Advertencia: No se cargaron items.");
-    } else {
-        log.log("Items cargados: " + std::to_string(loader.getItems().size()));
-    }
-    if (!loader.cargarLiderGym("data/lideres.txt")) {
-        log.log("Advertencia: No se cargaron lideres de gimnasio.");
-    } else {
-        log.log("Lideres cargados: " + std::to_string(loader.getLiderGym().size()));
-    }
+    else
+        log.log("Items cargados: " + to_string(loader.getItems().size()));
+
+    if (!loader.cargarLiderGym("data/lideres.txt"))
+        log.log("Advertencia: No se cargaron lideres.");
+    else
+        log.log("Lideres cargados: " + to_string(loader.getLiderGym().size()));
 
     world = GeneradorMapa::generarMundo("data/mapa.txt");
-    log.log("Lugares en el mundo: " + std::to_string(world.getLugares().size()));
+    log.log("Lugares en el mundo: " + to_string(world.getLugares().size()));
 
-    // Set up objectives
     objetivos.emplace_back("Conseguir 3 medallas de gimnasio");
-    objetivos.emplace_back("Sobrevivir la aventura completa");
+    objetivos.emplace_back("Derrotar a Giovanni en la Liga");
 
-    // Set player name and starter
     jugador = Jugador("Ash");
     elegirStarter();
 
-    log.log("Datos cargados. Comenzando aventura...");
-    log.log("");
+    log.log("Aventura comenzando...\n");
 }
 
 void Game::procesarLugar(Lugar* lugar) {
     Logger& log = Logger::getInstancia();
-    log.log("\n--- Lugar: " + lugar->getNombre() + " (" + std::to_string(lugar->getId()) + ") ---");
+    log.log("\n--- " + lugar->getNombre() + " ---");
 
     const auto& especies = loader.getEspecie();
     const auto& items    = loader.getItems();
@@ -102,43 +111,68 @@ void Game::procesarLugar(Lugar* lugar) {
     switch (lugar->getTipoEvento()) {
         case TipoEvento::WILD_POKEMON:
             if (!especies.empty()) {
-                int nivel = 3 + rand() % 5;
-                Pokemon salvaje = PokemonFactory::crearPokeRandom(especies, nivel);
+                // Pool scales with medals: zone1=COMMON, zone2=COMMON+RARE, zone3+=all
+                std::vector<EspeciePokemon> pool;
+                for (const auto& esp : especies) {
+                    if (esp.getRareza() == Rareza::LEGENDARY) continue;
+                    if (jugador.getMedallas() == 0 && esp.getRareza() != Rareza::COMMON) continue;
+                    if (jugador.getMedallas() == 1 && esp.getRareza() == Rareza::EPIC) continue;
+                    pool.push_back(esp);
+                }
+                if (pool.empty()) pool.push_back(especies[0]);
+                int idx = rand() % (int)pool.size();
+                int nivel = 3 + rand() % (jugador.getMedallas() * 3 + 4);
+                Pokemon salvaje = PokemonFactory::crearPoke(pool[idx], nivel);
                 evento = new EventoPokemonSalvaje(salvaje);
             }
             break;
+
         case TipoEvento::TRAINER: {
-            // Build a random trainer with 1-2 random pokemon
-            Entrenador ent("Entrenador " + std::to_string(lugar->getId()), 150);
+            Entrenador ent("Entrenador " + lugar->getNombre(), 150 + jugador.getMedallas() * 50);
             if (!especies.empty()) {
-                Pokemon p1 = PokemonFactory::crearPokeRandom(especies, 4 + rand() % 4);
+                int nivel = 4 + jugador.getMedallas() * 3 + rand() % 4;
+                // Early trainers use weaker common pokemon (first half of species list)
+                // Later trainers can use any species
+                int maxPool = (int)especies.size() - 1; // exclude legendary
+                if (jugador.getMedallas() == 0) maxPool = min(maxPool, 10); // only common-tier
+                int idx = rand() % maxPool;
+                Pokemon p1 = PokemonFactory::crearPoke(especies[idx], nivel);
                 ent.addPokemon(p1);
+                // Add second pokemon on later zones
+                if (jugador.getMedallas() >= 1) {
+                    int idx2 = rand() % maxPool;
+                    Pokemon p2 = PokemonFactory::crearPoke(especies[idx2], nivel - 1);
+                    ent.addPokemon(p2);
+                }
             }
             evento = new EventoBatallaEntrenador(ent);
             break;
         }
+
         case TipoEvento::SHOP:
-            if (!items.empty()) {
-                evento = new EventoTiendaObjetos(items);
-            }
+            if (!items.empty()) evento = new EventoTiendaObjetos(items);
             break;
+
         case TipoEvento::POKEMON_CENTER:
             evento = new EventoCentroPokemon();
             break;
+
         case TipoEvento::TREASURE:
             if (!items.empty()) {
                 int idx = rand() % (int)items.size();
                 evento = new EventoTesoro(items[idx]);
             }
             break;
+
         case TipoEvento::TRAP:
             evento = new EventoAtrapar(10);
             break;
+
         case TipoEvento::NPC:
             evento = new EventoNPC("Hola entrenador! Sigue adelante, la Liga te espera.");
             break;
+
         case TipoEvento::GYM: {
-            // Use gym leaders in order by medal count
             int idx = jugador.getMedallas();
             if (!lideres.empty()) {
                 idx = idx % (int)lideres.size();
@@ -146,8 +180,15 @@ void Game::procesarLugar(Lugar* lugar) {
             }
             break;
         }
+
         case TipoEvento::LEAGUE: {
-            log.log("[Liga] Has llegado a la Liga Pokemon! Batalla final!");
+            log.log("[Liga] Has llegado a la Liga Pokemon!");
+            if (jugador.getMedallas() < 3) {
+                log.log("[Liga] Necesitas 3 medallas para entrar. Solo tienes "
+                        + to_string(jugador.getMedallas()) + ".");
+                log.log("[Liga] Regresa cuando tengas mas medallas.");
+                return;
+            }
             if (!lideres.empty()) {
                 evento = new EventoGimnasio(lideres.back());
             }
@@ -162,10 +203,9 @@ void Game::procesarLugar(Lugar* lugar) {
 }
 
 void Game::revisarVictoria() {
-    if (jugador.getMedallas() >= 3) {
-        objetivos[0].completar();
-    }
-    if (!muerto) {
+    if (jugador.getMedallas() >= 3) objetivos[0].completar();
+    // Victory is reaching the league node and surviving
+    if (!muerto && ubicacionActual == (int)world.getLugares().size() - 1) {
         objetivos[1].completar();
     }
 }
@@ -183,17 +223,17 @@ void Game::generarReporteFinal() {
     log.log("         REPORTE FINAL");
     log.log("========================================");
     log.log("Jugador: " + jugador.getNombre());
-    log.log("Medallas obtenidas: " + std::to_string(jugador.getMedallas()));
-    log.log("Monedas finales: " + std::to_string(jugador.getPlata()));
-    log.log("Estado: " + std::string(muerto ? "DERROTA" : "VICTORIA"));
+    log.log("Medallas: " + to_string(jugador.getMedallas()));
+    log.log("Monedas: "  + to_string(jugador.getPlata()));
+    log.log("Estado: "   + string(muerto ? "DERROTA" : "VICTORIA"));
     log.log("\n--- Equipo final ---");
     for (const auto& p : jugador.getEquipo()) {
-        log.log("  " + p.getNombre() +
-                " | Nivel: " + std::to_string(p.getNivel()) +
-                " | HP: " + std::to_string(p.getHpActual()) + "/" + std::to_string(p.getHPMAX()) +
-                (p.estaMuerto() ? " [DEBILITADO]" : " [VIVO]"));
+        log.log("  " + p.getNombre()
+                + " Nv." + to_string(p.getNivel())
+                + " HP "  + to_string(p.getHpActual()) + "/" + to_string(p.getHPMAX())
+                + (p.estaMuerto() ? " [DEBILITADO]" : " [VIVO]"));
     }
-    log.log("\n--- Inventario final ---");
+    log.log("\n--- Inventario ---");
     if (jugador.getInventario().estaVacio()) {
         log.log("  (vacio)");
     } else {
@@ -203,23 +243,22 @@ void Game::generarReporteFinal() {
     }
     log.log("\n--- Objetivos ---");
     for (const auto& obj : objetivos) {
-        log.log("  [" + std::string(obj.estaCompletado() ? "X" : " ") + "] " + obj.getDescripcion());
+        log.log("  [" + string(obj.estaCompletado() ? "X" : " ") + "] " + obj.getDescripcion());
     }
     log.log("========================================");
 
-    // Write separate report file
-    std::ofstream reporte("data/reporte_final.txt");
+    ofstream reporte("data/reporte_final.txt");
     if (reporte.is_open()) {
         reporte << "REPORTE FINAL - Motor de Simulacion Pokemon\n";
-        reporte << "Jugador: " << jugador.getNombre() << "\n";
-        reporte << "Medallas: " << jugador.getMedallas() << "\n";
-        reporte << "Monedas: " << jugador.getPlata() << "\n";
+        reporte << "Jugador: "   << jugador.getNombre()  << "\n";
+        reporte << "Medallas: "  << jugador.getMedallas() << "\n";
+        reporte << "Monedas: "   << jugador.getPlata()    << "\n";
         reporte << "Resultado: " << (muerto ? "DERROTA" : "VICTORIA") << "\n";
         reporte << "\nEquipo:\n";
         for (const auto& p : jugador.getEquipo()) {
             reporte << "  " << p.getNombre()
-                    << " Nivel " << p.getNivel()
-                    << " HP " << p.getHpActual() << "/" << p.getHPMAX()
+                    << " Nv." << p.getNivel()
+                    << " HP "  << p.getHpActual() << "/" << p.getHPMAX()
                     << (p.estaMuerto() ? " DEBILITADO" : " VIVO") << "\n";
         }
         reporte << "\nObjetivos:\n";
@@ -227,20 +266,45 @@ void Game::generarReporteFinal() {
             reporte << "  [" << (obj.estaCompletado() ? "X" : " ") << "] " << obj.getDescripcion() << "\n";
         }
         reporte.close();
+        log.log("Reporte guardado en data/reporte_final.txt");
     }
 }
 
 void Game::correr() {
     Logger& log = Logger::getInstancia();
-    const auto& lugares = world.getLugares();
-    if (lugares.empty()) {
-        log.log("El mundo no tiene lugares. Verifica data/mapa.txt");
+    Lugar* actual = world.getLugar(ubicacionActual);
+
+    if (actual == nullptr) {
+        log.log("Error: no existe el lugar inicial.");
         return;
     }
 
-    for (int i = 0; i < (int)lugares.size() && !muerto; i++) {
-        procesarLugar(lugares[i]);
+    while (!muerto) {
+        procesarLugar(actual);
         revisarDerrota();
+        if (muerto) break;
+
+        const vector<int>& conexiones = actual->getConexiones();
+        if (conexiones.empty()) break;
+
+        // Show destinations
+        cout << "\nPuedes viajar a:\n";
+        for (int i = 0; i < (int)conexiones.size(); i++) {
+            Lugar* destino = world.getLugar(conexiones[i]);
+            if (destino != nullptr)
+                cout << "  " << (i + 1) << ". " << destino->getNombre() << "\n";
+        }
+
+        int opcion = 0;
+        cout << "Destino: ";
+        cin >> opcion;
+        while (opcion < 1 || opcion > (int)conexiones.size()) {
+            cout << "Opcion invalida: ";
+            cin >> opcion;
+        }
+
+        ubicacionActual = conexiones[opcion - 1];
+        actual = world.getLugar(ubicacionActual);
     }
 
     revisarVictoria();
