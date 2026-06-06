@@ -1,5 +1,4 @@
-//
-// Created by jr156 on 28/5/2026.
-//
+// Espacio base.
+// Está minimo a proposito; prefiero esto a meter comportamiento fantasma que luego nadie usa.
 
 #include "Space.h"

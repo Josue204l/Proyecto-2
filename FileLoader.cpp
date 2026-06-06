@@ -10,7 +10,7 @@
 
 FileLoader::FileLoader() {}
 
-// Helper: parse TipoPokemon from string
+// Mini helper: convierto el texto a enum acá para no repetir el mismo if raro por todo el loader.
 static TipoPokemon parseTipo(const std::string& s) {
     if (s == "FIRE")     return TipoPokemon::FIRE;
     if (s == "WATER")    return TipoPokemon::WATER;
@@ -21,7 +21,7 @@ static TipoPokemon parseTipo(const std::string& s) {
     return TipoPokemon::NORMAL;
 }
 
-// Helper: parse Rareza from string
+// Lo dejo separado porque la rareza cambia bastante el balance y prefiero esa lógica bien localizada.
 static Rareza parseRareza(const std::string& s) {
     if (s == "RARE")      return Rareza::RARE;
     if (s == "EPIC")      return Rareza::EPIC;
@@ -29,7 +29,7 @@ static Rareza parseRareza(const std::string& s) {
     return Rareza::COMMON;
 }
 
-// Helper: parse TipoItem from string
+// Mismo truco con items; asi el archivo de carga principal no se ensucia tanto.
 static TipoItem parseTipoItem(const std::string& s) {
     if (s == "POKEBALL")     return TipoItem::POKEBALL;
     if (s == "GREATBALL")    return TipoItem::GREATBALL;
@@ -38,7 +38,7 @@ static TipoItem parseTipoItem(const std::string& s) {
     return TipoItem::POTION;
 }
 
-// Format: nombre,tipo,hpBase,ataqueBase,defensaBase,nivelEvolucion,nombreEvolucion,rareza
+// Este formato queda fijo porque simplifica el parseo y evita andar adivinando columnas.
 bool FileLoader::cargarEspecies(const std::string& nombreArchivo) {
     std::ifstream file(nombreArchivo);
     if (!file.is_open()) {
@@ -69,7 +69,7 @@ bool FileLoader::cargarEspecies(const std::string& nombreArchivo) {
     return !especie.empty();
 }
 
-// Format: nombre,tipo,valor
+// Cortito a propósito: mientras menos columnas tenga el item, menos chance de meter datos mal escritos.
 bool FileLoader::cargarItem(const std::string& nombreArchivo) {
     std::ifstream file(nombreArchivo);
     if (!file.is_open()) {
@@ -95,7 +95,7 @@ bool FileLoader::cargarItem(const std::string& nombreArchivo) {
     return !items.empty();
 }
 
-// Format: nombre,plataGanada,pokemon1:nivel1,pokemon2:nivel2,...
+// Acá se usa este formato porque deja definir equipos rápido sin hacer otra estructura más pesada.
 bool FileLoader::cargarLiderGym(const std::string& nombreArchivo) {
     std::ifstream file(nombreArchivo);
     if (!file.is_open()) {

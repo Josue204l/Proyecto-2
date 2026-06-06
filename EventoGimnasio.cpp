@@ -1,6 +1,5 @@
-//
-// Created by Gabri on 5/31/26.
-//
+// Evento de gimnasio.
+// Acá quise dejarlo simple porque el peso real lo carga la pelea, no tanta logica alrededor.
 
 #include "EventoGimnasio.h"
 #include "Pelea.h"

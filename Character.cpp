@@ -1,5 +1,4 @@
-//
-// Created by jr156 on 28/5/2026.
-//
+// Clase base chiquita, casi no hace nada por si sola.
+// Igual la dejo separada porque despues crecerla sin base se vuelve un enredo medio tonto.
 
 #include "Character.h"

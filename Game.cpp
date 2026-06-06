@@ -26,7 +26,7 @@ void Game::elegirStarter() {
         return;
     }
 
-    // Show first 3 as starter options
+    // Agarro solo las primeras 3 porque al inicio demasiadas opciones mas bien estorban.
     int opciones = (int)especies.size() < 3 ? (int)especies.size() : 3;
     cout << "\n=== Elige tu Pokemon inicial ===" << endl;
     for (int i = 0; i < opciones; i++) {
@@ -45,7 +45,7 @@ void Game::elegirStarter() {
     jugador.agregarPokemon(starter);
     log.log("Elegiste a " + starter.getNombre() + " como tu Pokemon inicial!");
 
-    // Give starter items
+    // Le doy unas cosillas de arranque para que el jugador no quede vendido apenas empieza.
     const auto& items = loader.getItems();
     for (const auto& item : items) {
         if (const_cast<Item&>(item).getTipo() == TipoItem::POKEBALL) {
@@ -111,7 +111,7 @@ void Game::procesarLugar(Lugar* lugar) {
     switch (lugar->getTipoEvento()) {
         case TipoEvento::WILD_POKEMON:
             if (!especies.empty()) {
-                // Pool scales with medals: zone1=COMMON, zone2=COMMON+RARE, zone3+=all
+                // Esto escala con las medallas para que el arranque no se vuelva injusto desde la primera vuelta.
                 std::vector<EspeciePokemon> pool;
                 for (const auto& esp : especies) {
                     if (esp.getRareza() == Rareza::LEGENDARY) continue;
@@ -131,14 +131,14 @@ void Game::procesarLugar(Lugar* lugar) {
             Entrenador ent("Entrenador " + lugar->getNombre(), 150 + jugador.getMedallas() * 50);
             if (!especies.empty()) {
                 int nivel = 4 + jugador.getMedallas() * 3 + rand() % 4;
-                // Early trainers use weaker common pokemon (first half of species list)
-                // Later trainers can use any species
-                int maxPool = (int)especies.size() - 1; // exclude legendary
-                if (jugador.getMedallas() == 0) maxPool = min(maxPool, 10); // only common-tier
+                // Los primeros entrenadores salen flojitos apropósito, la idea es que enseñen el ritmo del juego y no frenen la partida.
+                // Ya después si se abre el pool completo para que la progresión se sienta real.
+                int maxPool = (int)especies.size() - 1; // saco legendarios porque aparecer tan pronto rompería el balance feisimo
+                if (jugador.getMedallas() == 0) maxPool = min(maxPool, 10); // acá recorto el pool para que el inicio no pegue tan duro
                 int idx = rand() % maxPool;
                 Pokemon p1 = PokemonFactory::crearPoke(especies[idx], nivel);
                 ent.addPokemon(p1);
-                // Add second pokemon on later zones
+                // Meto un segundo pokemon después porque así la dificultad sube poquito a poco y no de golpe.
                 if (jugador.getMedallas() >= 1) {
                     int idx2 = rand() % maxPool;
                     Pokemon p2 = PokemonFactory::crearPoke(especies[idx2], nivel - 1);
@@ -204,7 +204,7 @@ void Game::procesarLugar(Lugar* lugar) {
 
 void Game::revisarVictoria() {
     if (jugador.getMedallas() >= 3) objetivos[0].completar();
-    // Victory is reaching the league node and surviving
+    // La victoria no se marca solo por llegar; tiene que llegar vivo, si no el cierre se siente medio falso.
     if (!muerto && ubicacionActual == (int)world.getLugares().size() - 1) {
         objetivos[1].completar();
     }
@@ -287,7 +287,7 @@ void Game::correr() {
         const vector<int>& conexiones = actual->getConexiones();
         if (conexiones.empty()) break;
 
-        // Show destinations
+        // Muestro destinos acá para que el jugador vea el contexto antes de decidir y no ande escogiendo a ciegas.
         cout << "\nPuedes viajar a:\n";
         for (int i = 0; i < (int)conexiones.size(); i++) {
             Lugar* destino = world.getLugar(conexiones[i]);
