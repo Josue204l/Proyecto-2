@@ -1,4 +1,5 @@
 #include "Pokemon.h"
+#include "Logger.h"
 
 // Constructor por defecto, crea un pokemon vacio
 Pokemon::Pokemon() : nivel(1), experiencia(0), hpActual(1) {
@@ -68,10 +69,17 @@ void Pokemon::ganarExperiencia(int cantidad) {
 }
 
 void Pokemon::subirNivel() {
-    nivel++;
-    hpActual = getHPMAX(); // al subir nivel se cura
-}
 
+    nivel++;
+
+    hpActual = getHPMAX();
+
+    Logger::getInstancia().log(
+        getNombre() +
+        " subio al nivel " +
+        std::to_string(nivel)
+    );
+}
 // Verifica si puede evolucionar segun su nivel actual
 bool Pokemon::puedeEvolucionar() const {
     if (especie.getNombreEvolucion() == "NADA") {
@@ -91,7 +99,6 @@ int Pokemon::getNivelPoder() const {
     return getAtaque() + getDefensa() + getHPMAX();
 }
 
-// Operador > para comparar dos pokemon por su poder total
 bool Pokemon::operator>(const Pokemon& otro) const {
     return getNivelPoder() > otro.getNivelPoder();
 }

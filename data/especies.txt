@@ -1,20 +1,22 @@
 # Archivo de especies Pokemon
 # Formato: nombre,tipo,hpBase,ataqueBase,defensaBase,nivelEvolucion,nombreEvolucion,rareza
+# Stats base reducidos para que nivel 1-10 sea equilibrado
+# HP: 30-45 | Ataque: 25-40 | Defensa: 20-35
 
-Bulbasaur,GRASS,25,20,20,16,Ivysaur,COMMON
-Ivysaur,GRASS,35,28,28,32,Venusaur,RARE
-Venusaur,GRASS,50,38,38,0,NADA,EPIC
-Charmander,FIRE,22,22,18,16,Charmeleon,COMMON
-Charmeleon,FIRE,32,30,25,36,Charizard,RARE
-Charizard,FIRE,45,40,35,0,NADA,EPIC
-Squirtle,WATER,24,20,28,16,Wartortle,COMMON
-Wartortle,WATER,32,26,36,36,Blastoise,RARE
-Blastoise,WATER,45,35,48,0,NADA,EPIC
-Pikachu,ELECTRIC,20,25,18,0,NADA,RARE
-Raichu,ELECTRIC,35,42,25,0,NADA,EPIC
-Geodude,ROCK,22,35,45,25,Graveler,RARE
-Graveler,ROCK,30,42,52,0,NADA,EPIC
-Pidgey,FLYING,22,20,18,18,Pidgeotto,COMMON
-Pidgeotto,FLYING,32,28,25,36,Pidgeot,RARE
-Pidgeot,FLYING,45,38,35,0,NADA,EPIC
-Mewtwo,NORMAL,60,55,45,0,NADA,LEGENDARY
+Bulbasaur,GRASS,35,28,28,16,Ivysaur,COMMON
+Ivysaur,GRASS,45,36,36,32,Venusaur,RARE
+Venusaur,GRASS,60,48,48,0,NADA,EPIC
+Charmander,FIRE,30,30,22,16,Charmeleon,COMMON
+Charmeleon,FIRE,42,38,32,36,Charizard,RARE
+Charizard,FIRE,58,52,44,0,NADA,EPIC
+Squirtle,WATER,34,26,38,16,Wartortle,COMMON
+Wartortle,WATER,44,34,50,36,Blastoise,RARE
+Blastoise,WATER,58,46,62,0,NADA,EPIC
+Pikachu,ELECTRIC,28,32,22,0,NADA,RARE
+Raichu,ELECTRIC,42,46,30,0,NADA,EPIC
+Geodude,ROCK,30,38,52,25,Graveler,COMMON
+Graveler,ROCK,44,50,64,0,NADA,RARE
+Pidgey,FLYING,28,24,22,18,Pidgeotto,COMMON
+Pidgeotto,FLYING,40,32,30,36,Pidgeot,RARE
+Pidgeot,FLYING,54,44,40,0,NADA,EPIC
+Mewtwo,NORMAL,70,65,55,0,NADA,LEGENDARY
