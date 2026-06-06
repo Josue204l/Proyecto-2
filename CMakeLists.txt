@@ -6,13 +6,11 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(Proyecto_2 main.cpp
         World.cpp
         World.h
-        Space.cpp
         Space.h
         Objective.cpp
         Objective.h
         Logger.cpp
         Logger.h
-        Character.cpp
         Character.h
         Element.h
         Item.cpp
