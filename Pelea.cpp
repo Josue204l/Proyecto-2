@@ -29,32 +29,46 @@ int Pelea::calcularDannio(const Pokemon& atacante, const Pokemon& defensor) {
 }
 
 static void mostrarEstado(Jugador& juga, int idx, const Pokemon& enemigo) {
-    cout << "\n--- Estado de batalla ---" << endl;
+    cout << "\n=== Estado de batalla ===" << endl;
     cout << "  Tu Pokémon:  " << juga.getPokemon(idx)->getNombre()
-         << " HP: " << juga.getPokemon(idx)->getHpActual()
+         << " (Nivel " << juga.getPokemon(idx)->getNivel() << ")" << endl;
+    cout << "  HP: " << juga.getPokemon(idx)->getHpActual()
          << "/" << juga.getPokemon(idx)->getHPMAX() << endl;
+    cout << "  ATK: " << juga.getPokemon(idx)->getAtaque()
+         << "  DEF: " << juga.getPokemon(idx)->getDefensa() << endl;
     cout << "  Enemigo:     " << enemigo.getNombre()
-         << " HP: " << enemigo.getHpActual()
+         << " (Nivel " << enemigo.getNivel() << ")" << endl;
+    cout << "  HP: " << enemigo.getHpActual()
          << "/" << enemigo.getHPMAX() << endl;
     cout << "  Ítems en bolsa: " << juga.getInventario().getTamano() << endl;
+    cout << "============================" << endl;
 }
 
 // Devuelve true si usó un ítem, false si no había o canceló
 static bool usarItem(Jugador& juga, int idx) {
     if (juga.getInventario().estaVacio()) {
-        cout << "  ¡No tienes ítems!" << endl;
+        cout << "  [!] No tienes ítems en tu inventario." << endl;
         return false;
     }
     const auto& items = juga.getInventario().getItems();
-    cout << "  Ítems disponibles:" << endl;
+    cout << "\n  --- Ítems disponibles ---" << endl;
     for (int i = 0; i < (int)items.size(); i++)
         cout << "    [" << (i+1) << "] " << const_cast<Item&>(items[i]).getNombre()
              << " (" << const_cast<Item&>(items[i]).getValor() << " HP)" << endl;
-    int op = 0;
-    while (op < 1 || op > (int)items.size()) {
-        cout << "  Elige (0 cancela): ";
+    cout << "    [0] Cancelar" << endl;
+    int op = -1;
+    while (op < 0 || op > (int)items.size()) {
+        cout << "  Elige: ";
         cin >> op;
-        if (op == 0) return false;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            op = -1;
+        }
+        if (op == 0) {
+            cout << "  Cancelado." << endl;
+            return false;
+        }
     }
     Item item = juga.getInventario().getItem(op - 1);
     juga.getInventario().removerItem(op - 1);
@@ -76,7 +90,7 @@ static bool intentarCaptura(Jugador& juga, Pokemon& objetivo) {
         if (t == TipoItem::POKEBALL && idxBall == -1) idxBall = i;
     }
     if (idxBall == -1) {
-        cout << "  ¡No tienes Pokéballs!" << endl;
+        cout << "  [!] No tienes Pokéballs en tu inventario." << endl;
         return false; // no gastó nada, el turno se repite pero el enemigo sí contraataca
     }
     juga.getInventario().removerItem(idxBall);
@@ -87,6 +101,7 @@ static bool intentarCaptura(Jugador& juga, Pokemon& objetivo) {
     if (objetivo.getHpActual() * 4 <= objetivo.getHPMAX())      chance += 30;
     else if (objetivo.getHpActual() * 2 <= objetivo.getHPMAX()) chance += 15;
 
+    cout << "  Probabilidad de captura: " << chance << "%" << endl;
     if ((rand() % 100) < chance) {
         if (juga.getTamano() < 6) {
             juga.agregarPokemon(objetivo);
@@ -122,9 +137,19 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
 
         // --- Turno del jugador ---
         int accion = 0;
-        while (accion < 1 || accion > 3) {
-            cout << "  [1] Atacar  [2] Usar ítem  [3] Pokéball\n  Tu elección: ";
+        while (accion < 1 || accion > 4) {
+            cout << "\n  ¿Qué quieres hacer?" << endl;
+            cout << "    [1] Atacar" << endl;
+            cout << "    [2] Usar ítem" << endl;
+            cout << "    [3] Lanzar Pokéball" << endl;
+            cout << "    [4] Cambiar Pokémon" << endl;
+            cout << "  Tu elección: ";
             cin >> accion;
+            if (cin.fail()) {
+                cin.clear();
+                cin.ignore(10000, '\n');
+                accion = 0;
+            }
         }
 
         bool enemigoContraataca = true;
@@ -133,6 +158,7 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
             int d = calcularDannio(*juga.getPokemon(idx), pokemonSalvaje);
             pokemonSalvaje.dannioRecibido(d);
             log.log("  " + juga.getPokemon(idx)->getNombre() + " ataca por " + to_string(d) + " de daño.");
+            cout << "  ¡Caused " << d << " damage!" << endl;
             if (pokemonSalvaje.estaMuerto()) {
                 victoria = true;
                 batallaTerminada = true;
@@ -140,7 +166,7 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
             }
         } else if (accion == 2) {
             usarItem(juga, idx); // si no hay ítem el jugador pierde su turno pero el enemigo ataca
-        } else {
+        } else if (accion == 3) {
             bool teniaBall = false;
             const auto& inv = juga.getInventario().getItems();
             for (int i = 0; i < (int)inv.size(); i++) {
@@ -148,13 +174,41 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
                 if (t == TipoItem::POKEBALL || t == TipoItem::GREATBALL) { teniaBall = true; break; }
             }
             if (!teniaBall) {
-                cout << "  ¡No tienes Pokéballs!" << endl;
+                cout << "  [!] No tienes Pokéballs. Pierdes tu turno." << endl;
                 // sin ball: pierde el turno pero el enemigo ataca UNA sola vez
             } else if (intentarCaptura(juga, pokemonSalvaje)) {
                 batallaTerminada = true;
                 enemigoContraataca = false;
             }
             // si falló la captura, el enemigo contraataca una vez
+        } else if (accion == 4) {
+            // Cambiar Pokémon
+            cout << "\n  --- Tu equipo ---" << endl;
+            for (int i = 0; i < juga.getTamano(); i++) {
+                string estado = juga.getPokemon(i)->estaMuerto() ? " [DEBILITADO]" : "";
+                cout << "    [" << (i+1) << "] " << juga.getPokemon(i)->getNombre()
+                     << " HP: " << juga.getPokemon(i)->getHpActual()
+                     << "/" << juga.getPokemon(i)->getHPMAX() << estado << endl;
+            }
+            int nuevoIdx = -1;
+            while (nuevoIdx < 1 || nuevoIdx > juga.getTamano() || juga.getPokemon(nuevoIdx-1)->estaMuerto() || nuevoIdx-1 == idx) {
+                cout << "  Elige Pokémon (debe estar vivo y no ser el actual): ";
+                cin >> nuevoIdx;
+                if (cin.fail()) {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    nuevoIdx = -1;
+                }
+                if (nuevoIdx == idx) {
+                    cout << "  [!] Ese Pokémon ya está activo." << endl;
+                }
+                if (nuevoIdx >= 1 && nuevoIdx <= juga.getTamano() && juga.getPokemon(nuevoIdx-1)->estaMuerto()) {
+                    cout << "  [!] Ese Pokémon está debilitado." << endl;
+                }
+            }
+            idx = nuevoIdx - 1;
+            cout << "  ¡Vas con " << juga.getPokemon(idx)->getNombre() << "!" << endl;
+            enemigoContraataca = false; // cambiar Pokémon no gana turno del enemigo
         }
 
         if (batallaTerminada) break;
@@ -167,20 +221,27 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
 
             if (juga.getPokemon(idx)->estaMuerto()) {
                 log.log("  ¡" + juga.getPokemon(idx)->getNombre() + " fue debilitado!");
+                cout << "\n  [!] " << juga.getPokemon(idx)->getNombre() << " ha sido debilitado!" << endl;
                 // busca sustituto
                 int nuevoIdx = -1;
                 for (int i = 0; i < juga.getTamano(); i++)
                     if (!juga.getPokemon(i)->estaMuerto() && i != idx) { nuevoIdx = i; break; }
                 if (nuevoIdx == -1) { batallaTerminada = true; break; }
-                cout << "  Elige tu siguiente Pokémon:" << endl;
+                cout << "\n  Elige tu siguiente Pokémon:" << endl;
                 for (int i = 0; i < juga.getTamano(); i++)
                     if (!juga.getPokemon(i)->estaMuerto())
                         cout << "    [" << (i+1) << "] " << juga.getPokemon(i)->getNombre()
-                             << " HP: " << juga.getPokemon(i)->getHpActual() << endl;
+                             << " HP: " << juga.getPokemon(i)->getHpActual()
+                             << "/" << juga.getPokemon(i)->getHPMAX() << endl;
                 int sig = 0;
                 while (sig < 1 || sig > juga.getTamano() || juga.getPokemon(sig-1)->estaMuerto()) {
                     cout << "  Tu elección: ";
                     cin >> sig;
+                    if (cin.fail()) {
+                        cin.clear();
+                        cin.ignore(10000, '\n');
+                        sig = 0;
+                    }
                 }
                 idx = sig - 1;
                 cout << "  ¡Vas con " << juga.getPokemon(idx)->getNombre() << "!" << endl;
@@ -229,19 +290,57 @@ bool Pelea::empezarBatallaEntrenador(Jugador& juga, Entrenador entrenador) {
         mostrarEstado(juga, idx, enemigo);
 
         int accion = 0;
-        while (accion != 1 && accion != 2) {
-            cout << "  [1] Atacar  [2] Usar ítem\n  Tu elección: ";
+        while (accion < 1 || accion > 3) {
+            cout << "\n  ¿Qué quieres hacer?" << endl;
+            cout << "    [1] Atacar" << endl;
+            cout << "    [2] Usar ítem" << endl;
+            cout << "    [3] Cambiar Pokémon" << endl;
+            cout << "  Tu elección: ";
             cin >> accion;
+            if (cin.fail()) {
+                cin.clear();
+                cin.ignore(10000, '\n');
+                accion = 0;
+            }
         }
 
         bool enemigoContraataca = true;
 
         if (accion == 2) {
             usarItem(juga, idx);
+        } else if (accion == 3) {
+            // Cambiar Pokémon
+            cout << "\n  --- Tu equipo ---" << endl;
+            for (int i = 0; i < juga.getTamano(); i++) {
+                string estado = juga.getPokemon(i)->estaMuerto() ? " [DEBILITADO]" : "";
+                cout << "    [" << (i+1) << "] " << juga.getPokemon(i)->getNombre()
+                     << " HP: " << juga.getPokemon(i)->getHpActual()
+                     << "/" << juga.getPokemon(i)->getHPMAX() << estado << endl;
+            }
+            int nuevoIdx = -1;
+            while (nuevoIdx < 1 || nuevoIdx > juga.getTamano() || juga.getPokemon(nuevoIdx-1)->estaMuerto() || nuevoIdx-1 == idx) {
+                cout << "  Elige Pokémon (debe estar vivo y no ser el actual): ";
+                cin >> nuevoIdx;
+                if (cin.fail()) {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    nuevoIdx = -1;
+                }
+                if (nuevoIdx == idx) {
+                    cout << "  [!] Ese Pokémon ya está activo." << endl;
+                }
+                if (nuevoIdx >= 1 && nuevoIdx <= juga.getTamano() && juga.getPokemon(nuevoIdx-1)->estaMuerto()) {
+                    cout << "  [!] Ese Pokémon está debilitado." << endl;
+                }
+            }
+            idx = nuevoIdx - 1;
+            cout << "  ¡Vas con " << juga.getPokemon(idx)->getNombre() << "!" << endl;
+            enemigoContraataca = false; // cambiar Pokémon no gana turno del enemigo
         } else {
             int d = calcularDannio(*juga.getPokemon(idx), enemigo);
             enemigo.dannioRecibido(d);
             log.log("  " + juga.getPokemon(idx)->getNombre() + " ataca por " + to_string(d) + " de daño.");
+            cout << "  ¡Caused " << d << " damage!" << endl;
             if (enemigo.estaMuerto()) {
                 int exp = enemigo.getNivel() * 50;
                 juga.getPokemon(idx)->ganarExperiencia(exp);
@@ -262,21 +361,30 @@ bool Pelea::empezarBatallaEntrenador(Jugador& juga, Entrenador entrenador) {
 
         if (juga.getPokemon(idx)->estaMuerto()) {
             log.log("  ¡" + juga.getPokemon(idx)->getNombre() + " fue debilitado!");
+            cout << "\n  [!] " << juga.getPokemon(idx)->getNombre() << " ha sido debilitado!" << endl;
             int nuevoIdx = -1;
             for (int i = 0; i < juga.getTamano(); i++)
                 if (!juga.getPokemon(i)->estaMuerto() && i != idx) { nuevoIdx = i; break; }
             if (nuevoIdx == -1) break;
-            cout << "  Elige tu siguiente Pokémon:" << endl;
+            cout << "\n  Elige tu siguiente Pokémon:" << endl;
             for (int i = 0; i < juga.getTamano(); i++)
                 if (!juga.getPokemon(i)->estaMuerto())
                     cout << "    [" << (i+1) << "] " << juga.getPokemon(i)->getNombre()
-                         << " HP: " << juga.getPokemon(i)->getHpActual() << endl;
+                         << " HP: " << juga.getPokemon(i)->getHpActual()
+                         << "/" << juga.getPokemon(i)->getHPMAX() << endl;
             int sig = 0;
             while (sig < 1 || sig > juga.getTamano() || juga.getPokemon(sig-1)->estaMuerto()) {
                 cout << "  Tu elección: ";
                 cin >> sig;
+                if (cin.fail()) {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    sig = 0;
+                }
             }
-            log.log("  " + juga.getNombre() + " envía a " + juga.getPokemon(sig-1)->getNombre() + "!");
+            idx = sig - 1;
+            cout << "  ¡Vas con " << juga.getPokemon(idx)->getNombre() << "!" << endl;
+            log.log("  " + juga.getNombre() + " envía a " + juga.getPokemon(idx)->getNombre() + "!");
         }
     }
 
