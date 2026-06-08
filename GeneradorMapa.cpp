@@ -1,53 +1,1 @@
-//
-// Created by Gabri on 5/31/26.
-//
-
-#include "GeneradorMapa.h"
-#include <fstream>
-#include <sstream>
-#include <iostream>
-
-// Helper: parse TipoEvento from string
-static TipoEvento parseTipoEvento(const std::string& s) {
-    if (s == "WILD_POKEMON")   return TipoEvento::WILD_POKEMON;
-    if (s == "TRAINER")        return TipoEvento::TRAINER;
-    if (s == "SHOP")           return TipoEvento::SHOP;
-    if (s == "POKEMON_CENTER") return TipoEvento::POKEMON_CENTER;
-    if (s == "TREASURE")       return TipoEvento::TREASURE;
-    if (s == "TRAP")           return TipoEvento::TRAP;
-    if (s == "NPC")            return TipoEvento::NPC;
-    if (s == "GYM")            return TipoEvento::GYM;
-    if (s == "LEAGUE")         return TipoEvento::LEAGUE;
-    return TipoEvento::NPC;
-}
-
-// Map file format per line: id,nombre,tipoEvento,conexion1,conexion2,...
-World GeneradorMapa::generarMundo(const std::string& archivoMapa) {
-    World world;
-    std::ifstream file(archivoMapa);
-    if (!file.is_open()) {
-        std::cerr << "[GeneradorMapa] No se pudo abrir: " << archivoMapa << std::endl;
-        return world;
-    }
-    std::string linea;
-    while (std::getline(file, linea)) {
-        if (linea.empty() || linea[0] == '#') continue;
-        std::stringstream ss(linea);
-        std::string token, nombre, tipoStr;
-        int id;
-        try {
-            std::getline(ss, token, ','); id = std::stoi(token);
-            std::getline(ss, nombre, ',');
-            std::getline(ss, tipoStr, ',');
-            Lugar* lugar = new Lugar(id, nombre, parseTipoEvento(tipoStr));
-            while (std::getline(ss, token, ',')) {
-                if (!token.empty()) lugar->agregarConexion(std::stoi(token));
-            }
-            world.agregarLugar(lugar);
-        } catch (...) {
-            std::cerr << "[GeneradorMapa] Error al parsear linea: " << linea << std::endl;
-        }
-    }
-    file.close();
-    return world;
-}
+//// Created by Gabri on 5/31/26.//#include "GeneradorMapa.h"#include <fstream>#include <sstream>#include <iostream>// Helper: parse TipoEvento from stringstatic TipoEvento parseTipoEvento(const std::string& s) {    if (s == "WILD_POKEMON")   return TipoEvento::WILD_POKEMON;    if (s == "TRAINER")        return TipoEvento::TRAINER;    if (s == "SHOP")           return TipoEvento::SHOP;    if (s == "POKEMON_CENTER") return TipoEvento::POKEMON_CENTER;    if (s == "TREASURE")       return TipoEvento::TREASURE;    if (s == "TRAP")           return TipoEvento::TRAP;    if (s == "NPC")            return TipoEvento::NPC;    if (s == "GYM")            return TipoEvento::GYM;    if (s == "LEAGUE")         return TipoEvento::LEAGUE;    return TipoEvento::NPC;}// Map file format per line: id,nombre,tipoEvento,conexion1,conexion2,...World GeneradorMapa::generarMundo(const std::string& archivoMapa) {    World world;    std::ifstream file(archivoMapa);    if (!file.is_open()) {        std::cerr << "[GeneradorMapa] No se pudo abrir: " << archivoMapa << std::endl;        return world;    }    std::string linea;    while (std::getline(file, linea)) {        if (linea.empty() || linea[0] == '#') continue;        std::stringstream ss(linea);        std::string token, nombre, tipoStr;        int id;        try {            std::getline(ss, token, ','); id = std::stoi(token);            std::getline(ss, nombre, ',');            std::getline(ss, tipoStr, ',');            Lugar* lugar = new Lugar(id, nombre, parseTipoEvento(tipoStr));            while (std::getline(ss, token, ',')) {                if (!token.empty()) lugar->agregarConexion(std::stoi(token));            }            world.agregarLugar(lugar);        } catch (...) {            std::cerr << "[GeneradorMapa] Error al parsear linea: " << linea << std::endl;        }    }    file.close();    return world;}World GeneradorMapa::generarMundoAleatorio(int capas) {    World world;    int idActual = 0;    // Nodos de la capa anterior (arranca con el nodo inicial)    std::vector<int> capaAnterior;    // Nodo de inicio fijo    Lugar* inicio = new Lugar(idActual, "Pueblo Paleta", TipoEvento::NPC);    world.agregarLugar(inicio);    capaAnterior.push_back(idActual);    idActual++;    // Tipos de evento que pueden aparecer en nodos normales    // GYM y LEAGUE se colocan aparte de forma controlada    std::vector<TipoEvento> tiposNormales = {        TipoEvento::WILD_POKEMON,        TipoEvento::WILD_POKEMON,   // doble para que salga mas seguido        TipoEvento::TRAINER,        TipoEvento::TRAINER,        TipoEvento::SHOP,        TipoEvento::POKEMON_CENTER,        TipoEvento::TREASURE,        TipoEvento::TRAP    };    // Nombres genéricos por tipo para que no todo diga "Nodo X"    auto nombrePorTipo = [](TipoEvento t, int id) -> std::string {        switch (t) {            case TipoEvento::WILD_POKEMON:   return "Ruta " + std::to_string(id);            case TipoEvento::TRAINER:        return "Camino " + std::to_string(id);            case TipoEvento::SHOP:           return "Tienda " + std::to_string(id);            case TipoEvento::POKEMON_CENTER: return "Centro Pokemon";            case TipoEvento::TREASURE:       return "Zona Oculta " + std::to_string(id);            case TipoEvento::TRAP:           return "Cueva Oscura " + std::to_string(id);            default:                         return "Lugar " + std::to_string(id);        }    };    // Capas intermedias: cada capa tiene 2 o 3 nodos    // Los GYMs se colocan en capas fijas: capa 3, 6 y 9 (de 10 capas)    for (int capa = 1; capa < capas; capa++) {        int nodosPorCapa = 2 + (rand() % 2); // 2 o 3 nodos por capa        std::vector<int> capaActual;        bool esCapaGym = (capa == capas / 3) ||                         (capa == (capas * 2) / 3) ||                         (capa == capas - 1);        // En capas de GYM: nodo único obligatorio, no hay donde esquivar        if (esCapaGym) {            Lugar* gym = new Lugar(idActual, "Gimnasio " + std::to_string(idActual), TipoEvento::GYM);            for (int idPrev : capaAnterior) {                Lugar* prev = world.getLugar(idPrev);                if (prev) prev->agregarConexion(idActual);            }            world.agregarLugar(gym);            capaActual.push_back(idActual);            idActual++;        } else {            // Capas normales: 2 o 3 nodos a elegir            for (int n = 0; n < nodosPorCapa; n++) {                TipoEvento tipo = tiposNormales[rand() % tiposNormales.size()];                std::string nombre = nombrePorTipo(tipo, idActual);                Lugar* lugar = new Lugar(idActual, nombre, tipo);                for (int idPrev : capaAnterior) {                    Lugar* prev = world.getLugar(idPrev);                    if (prev) prev->agregarConexion(idActual);                }                world.agregarLugar(lugar);                capaActual.push_back(idActual);                idActual++;            }        }        capaAnterior = capaActual;    }    // Nodo final: Liga Pokemon — conectado desde todos los de la última capa    Lugar* liga = new Lugar(idActual, "Liga Pokemon", TipoEvento::LEAGUE);    for (int idPrev : capaAnterior) {        Lugar* prev = world.getLugar(idPrev);        if (prev) prev->agregarConexion(idActual);    }    world.agregarLugar(liga);    return world;}

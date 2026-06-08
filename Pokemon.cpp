@@ -67,7 +67,10 @@ void Pokemon::ganarExperiencia(int cantidad) {
         subirNivel();
     }
 }
-
+void Pokemon::subirNivelesDirecto(int n) {
+    for (int i = 0; i < n; i++)
+        subirNivel();
+}
 void Pokemon::subirNivel() {
 
     nivel++;

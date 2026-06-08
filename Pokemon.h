@@ -38,6 +38,7 @@ public:
 
     // Subir nivel y evolucionar
     void ganarExperiencia(int cantidad);
+    void subirNivelesDirecto(int n);
     void subirNivel();
     bool puedeEvolucionar() const;
     void evolucionar(const EspeciePokemon& nuevaEspecie);

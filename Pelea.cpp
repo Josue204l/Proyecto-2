@@ -9,22 +9,34 @@
 using namespace std;
 
 double Pelea::getMultiplicadorTipo(TipoPokemon atacante, TipoPokemon defensor) {
-    if (atacante == TipoPokemon::FIRE   && defensor == TipoPokemon::GRASS)    return 1.5;
-    if (atacante == TipoPokemon::WATER  && defensor == TipoPokemon::FIRE)     return 1.5;
-    if (atacante == TipoPokemon::GRASS  && defensor == TipoPokemon::WATER)    return 1.5;
-    if (atacante == TipoPokemon::ELECTRIC && defensor == TipoPokemon::WATER)  return 1.5;
-    if (atacante == TipoPokemon::ELECTRIC && defensor == TipoPokemon::FLYING) return 1.5;
-    if (atacante == TipoPokemon::ROCK   && defensor == TipoPokemon::FLYING)   return 1.5;
-    if (atacante == TipoPokemon::FIRE   && defensor == TipoPokemon::WATER)    return 0.75;
-    if (atacante == TipoPokemon::GRASS  && defensor == TipoPokemon::FIRE)     return 0.75;
-    if (atacante == TipoPokemon::WATER  && defensor == TipoPokemon::GRASS)    return 0.75;
+    // Super efectivo x1.5
+    if (atacante == TipoPokemon::FIRE     && defensor == TipoPokemon::GRASS)    return 1.5;
+    if (atacante == TipoPokemon::WATER    && defensor == TipoPokemon::FIRE)     return 1.5;
+    if (atacante == TipoPokemon::GRASS    && defensor == TipoPokemon::WATER)    return 1.5;
+    if (atacante == TipoPokemon::GRASS    && defensor == TipoPokemon::ROCK)     return 1.5;
+    if (atacante == TipoPokemon::WATER    && defensor == TipoPokemon::ROCK)     return 1.5;
+    if (atacante == TipoPokemon::ELECTRIC && defensor == TipoPokemon::WATER)    return 1.5;
+    if (atacante == TipoPokemon::ELECTRIC && defensor == TipoPokemon::FLYING)   return 1.5;
+    if (atacante == TipoPokemon::ROCK     && defensor == TipoPokemon::FLYING)   return 1.5;
+    if (atacante == TipoPokemon::ROCK     && defensor == TipoPokemon::FIRE)     return 1.5;
+
+    // Poco efectivo x0.5
+    if (atacante == TipoPokemon::FIRE   && defensor == TipoPokemon::WATER)      return 0.5;
+    if (atacante == TipoPokemon::FIRE   && defensor == TipoPokemon::ROCK)       return 0.5;
+    if (atacante == TipoPokemon::GRASS  && defensor == TipoPokemon::FIRE)       return 0.5;
+    if (atacante == TipoPokemon::ROCK   && defensor == TipoPokemon::GRASS)      return 0.5;
+    if (atacante == TipoPokemon::WATER  && defensor == TipoPokemon::GRASS)      return 0.5;
+    if (atacante == TipoPokemon::NORMAL && defensor == TipoPokemon::ROCK)       return 0.5;
+
     return 1.0;
 }
 
 int Pelea::calcularDannio(const Pokemon& atacante, const Pokemon& defensor) {
     double mult = getMultiplicadorTipo(atacante.getTipoPokemon(), defensor.getTipoPokemon());
-    int base = atacante.getAtaque() - (defensor.getDefensa() / 4);
-    if (base < 3) base = 3;
+    // Ataque vs defensa directamente, con el nivel del atacante como factor
+    double base = (atacante.getAtaque() - defensor.getDefensa() * 0.5)
+                  * (1.0 + atacante.getNivel() * 0.05);
+    if (base < 2) base = 2;
     return (int)(base * mult);
 }
 
@@ -192,12 +204,7 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
         log.log("  Resultado: ¡Victoria! " + pokemonSalvaje.getNombre() + " fue derrotado.");
         for (int i = 0; i < juga.getTamano(); i++) {
             if (!juga.getPokemon(i)->estaMuerto()) {
-                int exp = pokemonSalvaje.getNivel() * 50;
-                juga.getPokemon(i)->ganarExperiencia(exp);
-                log.log("  " + juga.getPokemon(i)->getNombre() + " ganó " + to_string(exp) + " de experiencia.");
-                if (juga.getPokemon(i)->puedeEvolucionar()) {
-                    log.log("  ¡" + juga.getPokemon(i)->getNombre() + " puede evolucionar!");
-                }
+                juga.getPokemon(i)->subirNivelesDirecto(1);
                 break;
             }
         }
@@ -284,6 +291,12 @@ bool Pelea::empezarBatallaEntrenador(Jugador& juga, Entrenador entrenador) {
     if (victoria) {
         juga.agregarPlata(entrenador.getPlataGanada());
         log.log("  ¡Victoria! Ganaste " + to_string(entrenador.getPlataGanada()) + " monedas.");
+        // Todos los pokemon vivos suben 2 niveles
+        for (int i = 0; i < juga.getTamano(); i++) {
+            if (!juga.getPokemon(i)->estaMuerto()) {
+                juga.getPokemon(i)->subirNivelesDirecto(2);
+            }
+        }
     } else {
         log.log("  Derrota contra el entrenador " + entrenador.getNombre() + ".");
     }

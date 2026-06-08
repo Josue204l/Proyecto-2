@@ -3,7 +3,7 @@
 # Niveles ajustados para que el jugador llegue al nivel correcto tras las batallas previas
 
 # Zona 1: jugador llega ~nivel 8-10 tras 2 batallas
-Brock,300,Geodude:8,Graveler:10
+Brock,300,Geodude:8,Geodude:9
 
 # Zona 2: jugador llega ~nivel 13-15 tras 2 batallas mas
 Misty,400,Squirtle:13,Wartortle:15

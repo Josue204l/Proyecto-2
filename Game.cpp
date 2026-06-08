@@ -106,7 +106,7 @@ void Game::inicializar() {
     else
         log.log("Lideres cargados: " + to_string(loader.getLiderGym().size()));
 
-    world = GeneradorMapa::generarMundo("data/mapa.txt");
+    world = GeneradorMapa::generarMundoAleatorio(10);
     log.log("Lugares en el mundo: " + to_string(world.getLugares().size()));
 
     objetivos.emplace_back("Conseguir 3 medallas de gimnasio");
@@ -131,37 +131,62 @@ void Game::procesarLugar(Lugar* lugar) {
     switch (lugar->getTipoEvento()) {
         case TipoEvento::WILD_POKEMON:
             if (!especies.empty()) {
-                // Esto escala con las medallas para que el arranque no se vuelva injusto desde la primera vuelta.
+                int medallas = jugador.getMedallas();
                 std::vector<EspeciePokemon> pool;
+
                 for (const auto& esp : especies) {
+                    // Nunca aparecen legendarios en la hierba
                     if (esp.getRareza() == Rareza::LEGENDARY) continue;
-                    if (jugador.getMedallas() == 0 && esp.getRareza() != Rareza::COMMON) continue;
-                    if (jugador.getMedallas() == 1 && esp.getRareza() == Rareza::EPIC) continue;
+
+                    // Nunca aparecen formas finales (las que no evolucionan más y son EPIC)
+                    // Eso filtra Venusaur, Charizard, Blastoise, etc.
+                    if (esp.getRareza() == Rareza::EPIC) continue;
+
+                    // Con 0 medallas: solo formas base (COMMON)
+                    if (medallas == 0 && esp.getRareza() != Rareza::COMMON) continue;
+
+                    // Con 1 medalla: base + primera evolución (COMMON y RARE)
+                    // Con 2+: todo lo que no sea EPIC ni LEGENDARY (ya filtrado arriba)
+
                     pool.push_back(esp);
                 }
+
                 if (pool.empty()) pool.push_back(especies[0]);
+
                 int idx = rand() % (int)pool.size();
-                int nivel = 3 + rand() % (jugador.getMedallas() * 3 + 4);
+
+                // Nivel acotado: el máximo nunca supera el nivel del starter + margen justo
+                // Con 0 medallas: nivel 2-5. Con 1: 5-9. Con 2: 9-13.
+                int nivelMin = 2 + medallas * 4;
+                int nivelMax = nivelMin + 3;
+                int nivel = nivelMin + rand() % (nivelMax - nivelMin + 1);
+
                 Pokemon salvaje = PokemonFactory::crearPoke(pool[idx], nivel);
                 evento = new EventoPokemonSalvaje(salvaje);
             }
             break;
-
         case TipoEvento::TRAINER: {
             Entrenador ent("Entrenador " + lugar->getNombre(), 150 + jugador.getMedallas() * 50);
             if (!especies.empty()) {
                 int nivel = 4 + jugador.getMedallas() * 3 + rand() % 4;
                 // Los primeros entrenadores salen flojitos apropósito, la idea es que enseñen el ritmo del juego y no frenen la partida.
                 // Ya después si se abre el pool completo para que la progresión se sienta real.
-                int maxPool = (int)especies.size() - 1; // saco legendarios porque aparecer tan pronto rompería el balance feisimo
-                if (jugador.getMedallas() == 0) maxPool = min(maxPool, 10); // acá recorto el pool para que el inicio no pegue tan duro
-                int idx = rand() % maxPool;
-                Pokemon p1 = PokemonFactory::crearPoke(especies[idx], nivel);
+                // Mismo criterio que salvajes: sin épicos ni legendarios en el pool de entrenadores tempranos
+                std::vector<EspeciePokemon> poolEnt;
+                for (const auto& esp : especies) {
+                    if (esp.getRareza() == Rareza::LEGENDARY) continue;
+                    if (esp.getRareza() == Rareza::EPIC) continue;
+                    if (jugador.getMedallas() == 0 && esp.getRareza() != Rareza::COMMON) continue;
+                    poolEnt.push_back(esp);
+                }
+                if (poolEnt.empty()) poolEnt.push_back(especies[0]);
+                int idxEnt = rand() % (int)poolEnt.size();
+                Pokemon p1 = PokemonFactory::crearPoke(poolEnt[idxEnt], nivel);
                 ent.addPokemon(p1);
                 // Meto un segundo pokemon después porque así la dificultad sube poquito a poco y no de golpe.
                 if (jugador.getMedallas() >= 1) {
-                    int idx2 = rand() % maxPool;
-                    Pokemon p2 = PokemonFactory::crearPoke(especies[idx2], nivel - 1);
+                    int idx2 = rand() % (int)poolEnt.size();
+                    Pokemon p2 = PokemonFactory::crearPoke(poolEnt[idx2], nivel - 1);
                     ent.addPokemon(p2);
                 }
             }
