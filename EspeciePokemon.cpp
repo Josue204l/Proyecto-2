@@ -2,10 +2,9 @@
 
 // Constructor por defecto, crea una especie vacia
 EspeciePokemon::EspeciePokemon()
-    : nombre("Desconocido"), tipo(TipoPokemon::NORMAL),
+    : nombre(""), tipo(TipoPokemon::NORMAL),
       hpBase(0), ataqueBase(0), defensaBase(0),
-      nivelEvolucion(0), nombreEvolucion("NADA"), rareza(Rareza::COMMON) {
-}
+      nivelEvolucion(0), nombreEvolucion(""), rareza(Rareza::COMMON), starter(false) {}
 
 // Constructor con los datos completos de la especie
 EspeciePokemon::EspeciePokemon(const string& nombre, TipoPokemon tipo, int hpBase,
@@ -29,3 +28,7 @@ int EspeciePokemon::getDefenseBase() const { return defensaBase; }
 int EspeciePokemon::getNivelEvolucion() const { return nivelEvolucion; }
 string EspeciePokemon::getNombreEvolucion() const { return nombreEvolucion; }
 Rareza EspeciePokemon::getRareza() const { return rareza; }
+bool EspeciePokemon::esStarter() const {return starter;}
+void EspeciePokemon::setStarter(bool valor) {
+    starter = valor;
+}

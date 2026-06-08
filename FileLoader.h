@@ -23,6 +23,7 @@ class FileLoader {
     const std::vector<EspeciePokemon>& getEspecie() const;
     const std::vector<Item>& getItems() const;
     const std::vector<Entrenador>& getLiderGym() const;
+    void setStarter(bool valor);
 };
 
 

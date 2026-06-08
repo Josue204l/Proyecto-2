@@ -12,40 +12,60 @@
 #include "EventoNPC.h"
 #include <fstream>
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
-using namespace std;
 
+using namespace std;
+static string tipoPokemonStr(TipoPokemon t) {
+    switch (t) {
+        case TipoPokemon::FIRE:     return "Fuego";
+        case TipoPokemon::WATER:    return "Agua";
+        case TipoPokemon::GRASS:    return "Planta";
+        case TipoPokemon::ELECTRIC: return "Electrico";
+        case TipoPokemon::ROCK:     return "Roca";
+        case TipoPokemon::FLYING:   return "Volador";
+        case TipoPokemon::NORMAL:   return "Normal";
+        default:                    return "Desconocido";
+    }
+}
 Game::Game() : ubicacionActual(0), muerto(false) {}
 
 void Game::elegirStarter() {
     Logger& log = Logger::getInstancia();
     const auto& especies = loader.getEspecie();
-    if (especies.empty()) {
-        log.log("Error: No hay especies cargadas.");
+
+    // Filtrar solo los starters
+    vector<EspeciePokemon> starters;
+    for (const auto& esp : especies)
+        if (esp.esStarter()) starters.push_back(esp);
+
+    if (starters.empty()) {
+        log.log("Error: No hay starters definidos en especies.txt");
         return;
     }
 
-    // Agarro solo las primeras 3 porque al inicio demasiadas opciones mas bien estorban.
-    int opciones = (int)especies.size() < 3 ? (int)especies.size() : 3;
-    cout << "\n=== Elige tu Pokemon inicial ===" << endl;
-    for (int i = 0; i < opciones; i++) {
-        cout << "  [" << (i + 1) << "] " << especies[i].getNombre() << endl;
+    cout << "\n=== Elige tu Pokemon inicial ===\n" << endl;
+    for (int i = 0; i < (int)starters.size(); i++) {
+        cout << "  [" << (i + 1) << "] " << starters[i].getNombre()
+             << "  Tipo: " << tipoPokemonStr(starters[i].getTipo())
+             << "  HP: "   << starters[i].getHpBase()
+             << "  ATK: "  << starters[i].getAtaqueBase()
+             << "  DEF: "  << starters[i].getDefenseBase() << "\n"
+             << "      Evoluciona en: " << starters[i].getNombreEvolucion()
+             << " (nivel " << starters[i].getNivelEvolucion() << ")\n" << endl;
     }
 
     int eleccion = 0;
-    while (eleccion < 1 || eleccion > opciones) {
-        cout << "Tu eleccion (1-" << opciones << "): ";
+    while (eleccion < 1 || eleccion > (int)starters.size()) {
+        cout << "Tu eleccion (1-" << starters.size() << "): ";
         cin >> eleccion;
-        if (eleccion < 1 || eleccion > opciones)
+        if (eleccion < 1 || eleccion > (int)starters.size())
             cout << "Opcion invalida." << endl;
     }
 
-    Pokemon starter = PokemonFactory::crearPoke(especies[eleccion - 1], 5);
+    Pokemon starter = PokemonFactory::crearPoke(starters[eleccion - 1], 5);
     jugador.agregarPokemon(starter);
     log.log("Elegiste a " + starter.getNombre() + " como tu Pokemon inicial!");
 
-    // Le doy unas cosillas de arranque para que el jugador no quede vendido apenas empieza.
+    // Items de arranque (esto no cambia)
     const auto& items = loader.getItems();
     for (const auto& item : items) {
         if (const_cast<Item&>(item).getTipo() == TipoItem::POKEBALL) {

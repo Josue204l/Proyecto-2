@@ -3,20 +3,20 @@
 # Stats base reducidos para que nivel 1-10 sea equilibrado
 # HP: 30-45 | Ataque: 25-40 | Defensa: 20-35
 
-Bulbasaur,GRASS,35,28,28,16,Ivysaur,COMMON
-Ivysaur,GRASS,45,36,36,32,Venusaur,RARE
-Venusaur,GRASS,60,48,48,0,NADA,EPIC
-Charmander,FIRE,30,30,22,16,Charmeleon,COMMON
-Charmeleon,FIRE,42,38,32,36,Charizard,RARE
-Charizard,FIRE,58,52,44,0,NADA,EPIC
-Squirtle,WATER,34,26,38,16,Wartortle,COMMON
-Wartortle,WATER,44,34,50,36,Blastoise,RARE
-Blastoise,WATER,58,46,62,0,NADA,EPIC
-Pikachu,ELECTRIC,28,32,22,0,NADA,RARE
-Raichu,ELECTRIC,42,46,30,0,NADA,EPIC
-Geodude,ROCK,30,38,52,25,Graveler,COMMON
-Graveler,ROCK,44,50,64,0,NADA,RARE
-Pidgey,FLYING,28,24,22,18,Pidgeotto,COMMON
-Pidgeotto,FLYING,40,32,30,36,Pidgeot,RARE
-Pidgeot,FLYING,54,44,40,0,NADA,EPIC
-Mewtwo,NORMAL,70,65,55,0,NADA,LEGENDARY
+Bulbasaur,GRASS,35,28,28,16,Ivysaur,COMMON,true
+Ivysaur,GRASS,45,36,36,32,Venusaur,RARE,false
+Venusaur,GRASS,60,48,48,0,NADA,EPIC,false
+Charmander,FIRE,30,30,22,16,Charmeleon,COMMON,true
+Charmeleon,FIRE,42,38,32,36,Charizard,RARE,false
+Charizard,FIRE,58,52,44,0,NADA,EPIC,false
+Squirtle,WATER,34,26,38,16,Wartortle,COMMON,true
+Wartortle,WATER,44,34,50,36,Blastoise,RARE,false
+Blastoise,WATER,58,46,62,0,NADA,EPIC,false
+Pikachu,ELECTRIC,28,32,22,0,NADA,RARE,false
+Raichu,ELECTRIC,42,46,30,0,NADA,EPIC,false
+Geodude,ROCK,30,38,52,25,Graveler,COMMON,false
+Graveler,ROCK,44,50,64,0,NADA,RARE,false
+Pidgey,FLYING,28,24,22,18,Pidgeotto,COMMON,false
+Pidgeotto,FLYING,40,32,30,36,Pidgeot,RARE,false
+Pidgeot,FLYING,54,44,40,0,NADA,EPIC,false
+Mewtwo,NORMAL,70,65,55,0,NADA,LEGENDARY,false

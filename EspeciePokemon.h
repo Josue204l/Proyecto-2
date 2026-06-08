@@ -16,6 +16,7 @@ private:
     int nivelEvolucion;   // nivel al que evoluciona (0 si no evoluciona)
     string nombreEvolucion; // nombre de la evolucion (NADA si no evoluciona)
     Rareza rareza;
+    bool starter;
 
 public:
     EspeciePokemon();
@@ -30,6 +31,8 @@ public:
     int getNivelEvolucion() const;
     string getNombreEvolucion() const;
     Rareza getRareza() const;
+    bool esStarter() const;
+    void setStarter(bool valor);
 };
 
 #endif // PROYECTO_2_ESPECIEPOKEMON_H

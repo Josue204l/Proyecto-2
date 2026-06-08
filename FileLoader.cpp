@@ -60,7 +60,11 @@ bool FileLoader::cargarEspecies(const std::string& nombreArchivo) {
             ss >> nivEvo; ss.ignore();
             std::getline(ss, evo, ',');
             std::getline(ss, rareza, ',');
-            especie.emplace_back(nombre, parseTipo(tipo), hp, atk, def, nivEvo, evo, parseRareza(rareza));
+            std::string starterStr;
+            std::getline(ss, starterStr, ',');
+            EspeciePokemon esp(nombre, parseTipo(tipo), hp, atk, def, nivEvo, evo, parseRareza(rareza));
+            esp.setStarter(starterStr == "true");
+            especie.push_back(esp);
         } catch (...) {
             std::cerr << "[FileLoader] Error al parsear especie: " << linea << std::endl;
         }
