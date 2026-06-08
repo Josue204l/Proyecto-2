@@ -62,7 +62,7 @@ bool FileLoader::cargarEspecies(const std::string& nombreArchivo) {
             std::getline(ss, rareza, ',');
             std::string starterStr;
             std::getline(ss, starterStr, ',');
-            EspeciePokemon esp(nombre, parseTipo(tipo), hp, atk, def, nivEvo, evo, parseRareza(rareza));
+            PokemonSpecies esp(nombre, parseTipo(tipo), hp, atk, def, nivEvo, evo, parseRareza(rareza));
             esp.setStarter(starterStr == "true");
             especie.push_back(esp);
         } catch (...) {
@@ -115,7 +115,7 @@ bool FileLoader::cargarLiderGym(const std::string& nombreArchivo) {
         try {
             std::getline(ss, nombre, ',');
             ss >> plata; ss.ignore();
-            Entrenador ent(nombre, plata);
+            Trainer ent(nombre, plata);
             while (std::getline(ss, token, ',')) {
                 std::stringstream ps(token);
                 std::string nomPoke;
@@ -140,6 +140,6 @@ bool FileLoader::cargarLiderGym(const std::string& nombreArchivo) {
     return !liderGym.empty();
 }
 
-const std::vector<EspeciePokemon>& FileLoader::getEspecie() const { return especie; }
+const std::vector<PokemonSpecies>& FileLoader::getEspecie() const { return especie; }
 const std::vector<Item>& FileLoader::getItems() const { return items; }
-const std::vector<Entrenador>& FileLoader::getLiderGym() const { return liderGym; }
+const std::vector<Trainer>& FileLoader::getLiderGym() const { return liderGym; }

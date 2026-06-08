@@ -7,11 +7,11 @@
 
 #include <vector>
 #include "Pokemon.h"
-#include "EspeciePokemon.h"
+#include "PokemonSpecies.h"
 class PokemonFactory {
     public:
-    static Pokemon crearPoke(const EspeciePokemon& especies,int nivel);
-    static Pokemon crearPokeRandom(const std :: vector<EspeciePokemon>& listaEspecies,int nivel);
+    static Pokemon crearPoke(const PokemonSpecies& especies,int nivel);
+    static Pokemon crearPokeRandom(const std :: vector<PokemonSpecies>& listaEspecies,int nivel);
 };
 
 

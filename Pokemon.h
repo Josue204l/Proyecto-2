@@ -1,22 +1,22 @@
 #ifndef PROYECTO_2_POKEMON_H
 #define PROYECTO_2_POKEMON_H
-#include "EspeciePokemon.h"
+#include "PokemonSpecies.h"
 
 // Representa un pokemon individual con su nivel, experiencia y HP actual
 // Usa EspeciePokemon para obtener los stats base
 class Pokemon {
 private:
-    EspeciePokemon especie;
+    PokemonSpecies especie;
     int nivel;
     int experiencia;
     int hpActual;
 
 public:
     Pokemon();
-    Pokemon(const EspeciePokemon& especie, int nivel);
+    Pokemon(const PokemonSpecies& especie, int nivel);
 
     // Getters de informacion basica
-    EspeciePokemon getEspeciePokemon() const;
+    PokemonSpecies getEspeciePokemon() const;
     string getNombre() const;
     TipoPokemon getTipoPokemon() const;
     int getNivel() const;
@@ -41,7 +41,7 @@ public:
     void subirNivelesDirecto(int n);
     void subirNivel();
     bool puedeEvolucionar() const;
-    void evolucionar(const EspeciePokemon& nuevaEspecie);
+    void evolucionar(const PokemonSpecies& nuevaEspecie);
 
     // Operador > para comparar poder entre dos pokemon
     bool operator>(const Pokemon& otro) const;

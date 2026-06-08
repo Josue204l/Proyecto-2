@@ -13,6 +13,7 @@ class Logger {
     Logger();
     public:
     static Logger &getInstancia();
+    void reiniciar();
     void log(const std::string &message);
     void close();
     Logger(const Logger &) = delete;

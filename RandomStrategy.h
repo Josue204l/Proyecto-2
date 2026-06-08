@@ -4,10 +4,10 @@
 
 #ifndef PROYECTO_2_RANDOMSTRATEGY_H
 #define PROYECTO_2_RANDOMSTRATEGY_H
-#include "PeleaStrategy.h"
+#include "BattleStrategy.h"
 
 
-class RandomStrategy : public PeleaStrategy {
+class RandomStrategy : public BattleStrategy {
 public :
     int elegirAccion() override;
 };

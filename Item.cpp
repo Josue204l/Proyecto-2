@@ -11,6 +11,6 @@ Item::Item(string nombre, TipoItem tipo, int valor) {
     this->valor = valor;
 }
 
-string Item::getNombre() { return nombre; }
-TipoItem Item::getTipo() { return tipo; }
-int Item::getValor() { return valor; }
+string Item::getNombre() const { return nombre; }
+TipoItem Item::getTipo() const { return tipo; }
+int Item::getValor() const { return valor; }

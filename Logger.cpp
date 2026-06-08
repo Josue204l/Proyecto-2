@@ -6,6 +6,11 @@
 #include <iostream>
 
 Logger::Logger() {
+    reiniciar();
+}
+
+void Logger::reiniciar() {
+    if (logFile.is_open()) logFile.close();
     // La bitácora arranca limpia en cada corrida para no mezclar historias viejas con la actual.
     logFile.open("data/bitacora.txt", std::ios::out | std::ios::trunc);
     if (!logFile.is_open()) {

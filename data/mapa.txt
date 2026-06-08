@@ -1,38 +1,40 @@
-
 # Mapa del mundo
 # Formato: id,nombre,tipoEvento,conexion1,conexion2,...
-# Estructura: wild -> centro -> entrenador -> entrenador -> GYM (por cada zona)
+# Estructura roguelike por capas: cada zona ofrece rutas alternativas,
+# dos encuentros de progreso y un centro antes del gimnasio obligatorio.
 
-# ---- ZONA 1 (Medalla 1 - Brock) ----
-0,Pueblo Paleta,NPC,1
-1,Ruta 1,WILD_POKEMON,2
-2,Ciudad Plateada,POKEMON_CENTER,3
-3,Ruta 2,TRAINER,4
-4,Ruta 2B,WILD_POKEMON,5
-5,Ruta 2C,TRAINER,6
-6,Ciudad Celeste,GYM,7
+# ---- INICIO ----
+0,Pueblo Paleta,NPC,1,2
 
-# ---- ZONA 2 (Medalla 2 - Misty) ----
-7,Ruta 3,WILD_POKEMON,8
-8,Tienda Cerulean,SHOP,9
-9,Ruta 4,TRAINER,10
-10,Ciudad Cerulean Centro,POKEMON_CENTER,11
-11,Ruta 4B,WILD_POKEMON,12
-12,Ruta 4C,TRAINER,13
-13,Ciudad Cerulean,GYM,14
+# ---- ZONA 1 (Medalla de Brock) ----
+1,Ruta 1,WILD_POKEMON,3,4
+2,Sendero del Entrenador,TRAINER,3,4
+3,Bosque Verde,WILD_POKEMON,5
+4,Camino Plateado,TRAINER,5
+5,Centro Plateada,POKEMON_CENTER,6
+6,Gimnasio Plateada,GYM,7,8
 
-# ---- ZONA 3 (Medalla 3 - Lt. Surge) ----
-14,Ruta 5,TRAINER,15
-15,Bosque Verde,TREASURE,16
-16,Ciudad Vermilion Centro,POKEMON_CENTER,17
-17,Ruta 6,WILD_POKEMON,18
-18,Ruta 6B,TRAINER,19
-19,Ciudad Azulona,GYM,20
+# ---- ZONA 2 (Medalla de Misty) ----
+7,Ruta 3,WILD_POKEMON,9,10
+8,Puente Pepita,TRAINER,9,10
+9,Cueva Celeste,WILD_POKEMON,11
+10,Entrenador Cerulean,TRAINER,11
+11,Centro Cerulean,POKEMON_CENTER,12
+12,Gimnasio Cerulean,GYM,13,14
 
-# ---- ZONA 4 (Liga) ----
-20,Ruta 7,WILD_POKEMON,21
-21,Ciudad Fucsia,POKEMON_CENTER,22
-22,Ruta 8,TRAINER,23
-23,Ruta 8B,WILD_POKEMON,24
-24,Ruta Final,TRAINER,25
+# ---- ZONA 3 (Medalla de Lt. Surge) ----
+13,Ruta 5,TRAINER,15,16
+14,Ruta 6,WILD_POKEMON,15,16
+15,Guarida Rocket,TRAINER,17
+16,Zona Oculta,TREASURE,17
+17,Centro Vermilion,POKEMON_CENTER,18
+18,Gimnasio Vermilion,GYM,19,20
+
+# ---- CAMINO A LA LIGA ----
+19,Ruta 7,WILD_POKEMON,21,22
+20,Tienda Azulona,SHOP,21,22
+21,Camino Victoria,TRAINER,23
+22,Cueva Victoria,TRAP,23
+23,Centro de la Meseta,POKEMON_CENTER,24
+24,Ultimo Rival,TRAINER,25
 25,Liga Pokemon,LEAGUE

@@ -8,9 +8,18 @@
 
 ## Descripción de la simulación
 
-El sistema simula una aventura Pokémon completa en consola. Un jugador llamado **Ash** recorre un mundo compuesto por 29 lugares interconectados, enfrentando Pokémon salvajes, entrenadores, líderes de gimnasio y eventos especiales. La simulación es automática: el programa toma decisiones por el jugador usando estrategias programadas.
+El sistema simula una aventura Pokémon completa en consola. El jugador recorre un mundo compuesto por 26 lugares interconectados, enfrentando Pokémon salvajes, entrenadores, líderes de gimnasio y eventos especiales. La simulación es semiautomática: las reglas controlan el mundo y el jugador elige rutas y acciones de combate.
 
 El objetivo es obtener **3 medallas de gimnasio** y sobrevivir hasta llegar a la **Liga Pokémon**.
+
+### Progresión de niveles
+
+| Tramo | Pokémon salvajes | Entrenadores |
+|---|---:|---:|
+| Antes de Brock | 3-6 | 5-7 |
+| Antes de Misty | 8-11 | 9-12 |
+| Antes de Lt. Surge | 13-17 | 15-18 |
+| Camino a la Liga | 20-25 | 22-27 |
 
 ---
 
@@ -21,30 +30,30 @@ Proyecto#2/
 ├── main.cpp                  # Punto de entrada
 ├── Game.h / Game.cpp         # Motor principal de simulación
 ├── World.h / World.cpp       # Contenedor del mundo
-├── Lugar.h / Lugar.cpp       # Espacio navegable (hereda Space)
+├── Location.h / Location.cpp # Espacio navegable (hereda Space)
 ├── Space.h                   # Interfaz abstracta de espacio
 ├── Character.h               # Interfaz abstracta de personaje
-├── Jugador.h / Jugador.cpp   # Jugador principal (hereda Character)
-├── Entrenador.h / Entrenador.cpp
+├── Player.h / Player.cpp   # Jugador principal (hereda Character)
+├── Trainer.h / Trainer.cpp
 ├── Pokemon.h / Pokemon.cpp   # Entidad Pokémon con stats y evolución
-├── EspeciePokemon.h / .cpp   # Datos base de cada especie
-├── Inventario.h / .cpp       # Inventario del jugador
+├── PokemonSpecies.h / .cpp   # Datos base de cada especie
+├── Inventory.h / .cpp       # Inventario del jugador
 ├── Item.h / Item.cpp         # Items del juego
-├── Pelea.h / Pelea.cpp       # Motor de combate con multiplicadores de tipo
-├── PeleaStrategy.h           # Interfaz Strategy para combate
-├── AgresivaStrategy.h / .cpp # Siempre ataca
-├── DefensaStrategy.h / .cpp  # Siempre usa item
+├── Battle.h / Battle.cpp     # Motor de combate con multiplicadores de tipo
+├── BattleStrategy.h           # Interfaz Strategy para combate
+├── AggressiveStrategy.h / .cpp # Siempre ataca
+├── DefensiveStrategy.h / .cpp  # Siempre usa item
 ├── RandomStrategy.h / .cpp   # Acción aleatoria
-├── Evento.h                  # Clase base abstracta de eventos
-├── EventoPokemonSalvaje.h / .cpp
-├── EventoBatallaEntrenador.h / .cpp
-├── EventoGimnasio.h / .cpp
-├── EventoCentroPokemon.h / .cpp
-├── EventoTiendaObjetos.h / .cpp
-├── EventoTesoro.h / .cpp
-├── EventoNPC.h / .cpp
+├── Event.h                  # Clase base abstracta de eventos
+├── WildPokemonEvent.h / .cpp
+├── TrainerBattleEvent.h / .cpp
+├── GymEvent.h / .cpp
+├── PokemonCenterEvent.h / .cpp
+├── ShopEvent.h / .cpp
+├── TreasureEvent.h / .cpp
+├── NpcEvent.h / .cpp
 ├── FileLoader.h / .cpp       # Carga de archivos de entrada
-├── GeneradorMapa.h / .cpp    # Construye el mundo desde archivo
+├── MapGenerator.h / .cpp    # Construye el mundo desde archivo
 ├── Logger.h / .cpp           # Singleton para bitácora
 ├── PokemonFactory.h / .cpp   # Factory para crear Pokémon
 ├── Objective.h / .cpp        # Objetivos de la simulación
@@ -67,39 +76,39 @@ Proyecto#2/
 
 ### Con CMake (recomendado — CLion)
 
+Desde la raíz del proyecto:
+
 ```bash
-mkdir build
-cd build
-cmake ..
-cmake --build .
+cmake -S . -B build
+cmake --build build
 ```
 
 ### Con g++ directo
 
 ```bash
-g++ -std=c++20 -o simulacion main.cpp Game.cpp World.cpp Lugar.cpp Jugador.cpp \
-    Entrenador.cpp Pokemon.cpp EspeciePokemon.cpp Inventario.cpp Item.cpp \
-    Pelea.cpp AgresivaStrategy.cpp DefensaStrategy.cpp RandomStrategy.cpp \
-    PeleaStrategy.cpp Evento.cpp EventoPokemonSalvaje.cpp EventoBatallaEntrenador.cpp \
-    EventoGimnasio.cpp EventoCentroPokemon.cpp EventoTiendaObjetos.cpp \
-    EventoTesoro.cpp EventoNPC.cpp FileLoader.cpp GeneradorMapa.cpp Logger.cpp \
-    PokemonFactory.cpp Objective.cpp Obstacle.cpp Character.cpp Space.cpp
+g++ -std=c++20 -o simulacion main.cpp Game.cpp World.cpp Location.cpp Player.cpp \
+    Trainer.cpp Pokemon.cpp PokemonSpecies.cpp Inventory.cpp Item.cpp \
+    Battle.cpp AggressiveStrategy.cpp DefensiveStrategy.cpp RandomStrategy.cpp \
+    BattleStrategy.cpp Event.cpp WildPokemonEvent.cpp TrainerBattleEvent.cpp \
+    GymEvent.cpp PokemonCenterEvent.cpp ShopEvent.cpp \
+    TreasureEvent.cpp TrapEvent.cpp NpcEvent.cpp FileLoader.cpp MapGenerator.cpp \
+    Logger.cpp PokemonFactory.cpp Objective.cpp Obstacle.cpp
 ```
 
 ---
 
 ## Ejecución
 
-El ejecutable debe correrse **desde la raíz del proyecto** para que las rutas relativas a `data/` funcionen correctamente.
+El ejecutable debe iniciarse **desde la raíz del proyecto** para que las rutas relativas a `data/` funcionen correctamente.
+
+```bash
+./build/Proyecto_2
+```
+
+Si se compiló con el comando directo:
 
 ```bash
 ./simulacion
-```
-
-o en Windows:
-
-```bash
-simulacion.exe
 ```
 
 > **Importante:** La carpeta `data/` debe existir junto al ejecutable con los archivos `especies.txt`, `items.txt`, `lideres.txt` y `mapa.txt`.
@@ -121,7 +130,7 @@ Define los líderes de gimnasio y sus equipos.
 Formato: `nombre,plataGanada,pokemon1:nivel1,pokemon2:nivel2,...`
 
 ### `data/mapa.txt`
-Define los lugares del mundo y sus conexiones.  
+Define los lugares del mundo, sus eventos y sus conexiones. El juego construye desde este archivo un recorrido roguelike por capas, con rutas alternativas que se unen antes de cada gimnasio.
 Formato: `id,nombre,tipoEvento,conexion1,conexion2,...`
 
 Las líneas que comienzan con `#` son comentarios y se ignoran.
@@ -142,18 +151,18 @@ Las líneas que comienzan con `#` son comentarios y se ignoran.
 | Patrón | Clase(s) | Justificación |
 |---|---|---|
 | Singleton | `Logger` | Una sola instancia de bitácora en todo el sistema |
-| Strategy | `PeleaStrategy`, `AgresivaStrategy`, `DefensaStrategy`, `RandomStrategy` | Permite cambiar el comportamiento de combate sin modificar `Pelea` |
+| Strategy | `BattleStrategy`, `AggressiveStrategy`, `DefensiveStrategy`, `RandomStrategy` | Los entrenadores normales usan `RandomStrategy`, Misty usa `DefensiveStrategy` y los demás líderes usan `AggressiveStrategy` |
 | Factory | `PokemonFactory` | Centraliza la creación de instancias Pokémon |
-| Polimorfismo | `Evento` y sus 7 subclases | Cada lugar ejecuta su evento sin conocer el tipo concreto |
+| Polimorfismo | `Event` y sus 7 subclases | Cada lugar ejecuta su evento sin conocer el tipo concreto |
 
 ---
 
 ## Técnicas de Programación II aplicadas
 
-- Herencia: `Jugador → Character`, `Lugar → Space`, `Evento → subclases`
-- Polimorfismo: jerarquía de `Evento`, jerarquía de `PeleaStrategy`
+- Herencia: `Player → Character`, `Location → Space`, `Event → subclases`
+- Polimorfismo: jerarquía de `Event`, jerarquía de `BattleStrategy`
 - Sobrecarga de operadores: `Pokemon::operator>` compara por nivel de poder
 - Manejo de archivos: lectura con `ifstream`, escritura con `ofstream`
-- Manejo de excepciones: bloques `try/catch` en `FileLoader` y `GeneradorMapa`
-- Memoria dinámica: `Lugar*` en `World`, `Evento*` en `Game`, destructor en `World`
+- Manejo de excepciones: bloques `try/catch` en `FileLoader` y `MapGenerator`
+- Memoria dinámica: `Location*` en `World`, `Event*` en `Game`, destructor en `World`
 - Programación genérica: uso de `std::vector<T>` con distintos tipos

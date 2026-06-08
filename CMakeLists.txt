@@ -20,48 +20,48 @@ add_executable(Proyecto_2 main.cpp
         FileLoader.cpp
         FileLoader.h
         Enums.h
-        EspeciePokemon.cpp
-        EspeciePokemon.h
+        PokemonSpecies.cpp
+        PokemonSpecies.h
         Pokemon.cpp
         Pokemon.h
-        Inventario.cpp
-        Inventario.h
-        Jugador.cpp
-        Jugador.h
-        Entrenador.cpp
-        Entrenador.h
-        Evento.cpp
-        Evento.h
-        EventoPokemonSalvaje.cpp
-        EventoPokemonSalvaje.h
-        EventoBatallaEntrenador.cpp
-        EventoBatallaEntrenador.h
-        EventoTiendaObjetos.cpp
-        EventoTiendaObjetos.h
-        EventoCentroPokemon.cpp
-        EventoCentroPokemon.h
-        EventoTesoro.cpp
-        EventoTesoro.h
-        EventoAtrapar.cpp
-        EventoAtrapar.h
-        EventoNPC.cpp
-        EventoNPC.h
-        EventoGimnasio.cpp
-        EventoGimnasio.h
-        PeleaStrategy.cpp
-        PeleaStrategy.h
-        AgresivaStrategy.cpp
-        AgresivaStrategy.h
-        DefensaStrategy.cpp
-        DefensaStrategy.h
+        Inventory.cpp
+        Inventory.h
+        Player.cpp
+        Player.h
+        Trainer.cpp
+        Trainer.h
+        Event.cpp
+        Event.h
+        WildPokemonEvent.cpp
+        WildPokemonEvent.h
+        TrainerBattleEvent.cpp
+        TrainerBattleEvent.h
+        ShopEvent.cpp
+        ShopEvent.h
+        PokemonCenterEvent.cpp
+        PokemonCenterEvent.h
+        TreasureEvent.cpp
+        TreasureEvent.h
+        TrapEvent.cpp
+        TrapEvent.h
+        NpcEvent.cpp
+        NpcEvent.h
+        GymEvent.cpp
+        GymEvent.h
+        BattleStrategy.cpp
+        BattleStrategy.h
+        AggressiveStrategy.cpp
+        AggressiveStrategy.h
+        DefensiveStrategy.cpp
+        DefensiveStrategy.h
         RandomStrategy.cpp
         RandomStrategy.h
-        Pelea.cpp
-        Pelea.h
-        Lugar.cpp
-        Lugar.h
-        GeneradorMapa.cpp
-        GeneradorMapa.h
+        Battle.cpp
+        Battle.h
+        Location.cpp
+        Location.h
+        MapGenerator.cpp
+        MapGenerator.h
         PokemonFactory.cpp
         PokemonFactory.h
         Game.cpp

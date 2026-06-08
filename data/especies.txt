@@ -14,7 +14,7 @@ Wartortle,WATER,44,34,50,36,Blastoise,RARE,false
 Blastoise,WATER,58,46,62,0,NADA,EPIC,false
 Pikachu,ELECTRIC,28,32,22,0,NADA,RARE,false
 Raichu,ELECTRIC,42,46,30,0,NADA,EPIC,false
-Geodude,ROCK,30,28,42,25,Graveler,COMMON,falseq1
+Geodude,ROCK,30,28,42,25,Graveler,COMMON,false
 Graveler,ROCK,40,34,48,0,NADA,RARE,false
 Pidgey,FLYING,28,24,22,18,Pidgeotto,COMMON,false
 Pidgeotto,FLYING,40,32,30,36,Pidgeot,RARE,false

@@ -5,12 +5,12 @@
 #ifndef PROYECTO_2_WORLD_H
 #define PROYECTO_2_WORLD_H
 
-#include "Lugar.h"
+#include "Location.h"
 using namespace std;
 
 class World {
 private:
-    vector<Lugar*> lugares;
+    vector<Location*> lugares;
 public:
     World();
     ~World();
@@ -19,9 +19,9 @@ public:
     World(const World& otro);
     World& operator=(const World& otro);
 
-    void agregarLugar(Lugar* lugar);
-    Lugar* getLugar(int id);
-    const vector<Lugar*>& getLugares() const;
+    void agregarLugar(Location* lugar);
+    Location* getLugar(int id);
+    const vector<Location*>& getLugares() const;
 };
 
 #endif // PROYECTO_2_WORLD_H

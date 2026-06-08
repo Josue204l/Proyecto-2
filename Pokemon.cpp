@@ -6,12 +6,12 @@ Pokemon::Pokemon() : nivel(1), experiencia(0), hpActual(1) {
 }
 
 // Constructor principal: recibe la especie y el nivel inicial
-Pokemon::Pokemon(const EspeciePokemon& especie, int nivel)
+Pokemon::Pokemon(const PokemonSpecies& especie, int nivel)
     : especie(especie), nivel(nivel), experiencia(0) {
     hpActual = getHPMAX(); // empieza con HP lleno
 }
 
-EspeciePokemon Pokemon::getEspeciePokemon() const { return especie; }
+PokemonSpecies Pokemon::getEspeciePokemon() const { return especie; }
 string Pokemon::getNombre() const { return especie.getNombre(); }
 TipoPokemon Pokemon::getTipoPokemon() const { return especie.getTipo(); }
 int Pokemon::getNivel() const { return nivel; }
@@ -92,7 +92,7 @@ bool Pokemon::puedeEvolucionar() const {
 }
 
 // Cambia la especie del pokemon por su evolucion
-void Pokemon::evolucionar(const EspeciePokemon& nuevaEspecie) {
+void Pokemon::evolucionar(const PokemonSpecies& nuevaEspecie) {
     especie = nuevaEspecie;
     hpActual = getHPMAX();
 }

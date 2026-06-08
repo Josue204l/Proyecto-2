@@ -15,9 +15,9 @@ public:
     Item();
     Item(string nombre, TipoItem tipo, int valor);
 
-    string getNombre();
-    TipoItem getTipo();
-    int getValor();
+    string getNombre() const;
+    TipoItem getTipo() const;
+    int getValor() const;
 };
 
 #endif // PROYECTO_2_ITEM_H

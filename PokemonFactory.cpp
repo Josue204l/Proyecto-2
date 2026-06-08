@@ -6,12 +6,12 @@
 #include <cstdlib>
 #include <vector>
 
-Pokemon PokemonFactory::crearPoke(const EspeciePokemon& especie, int nivel) {
+Pokemon PokemonFactory::crearPoke(const PokemonSpecies& especie, int nivel) {
     return Pokemon(especie, nivel);
 }
 
 // Filtra especies según rareza permitida por zona (nivel bajo = solo COMMON, luego RARE, luego EPIC/LEGENDARY)
-Pokemon PokemonFactory::crearPokeRandom(const std::vector<EspeciePokemon>& listaEspecies, int nivel) {
+Pokemon PokemonFactory::crearPokeRandom(const std::vector<PokemonSpecies>& listaEspecies, int nivel) {
     // Determina rareza máxima permitida según nivel de zona
     Rareza maxRareza;
     if (nivel <= 5)       maxRareza = Rareza::COMMON;
@@ -20,7 +20,7 @@ Pokemon PokemonFactory::crearPokeRandom(const std::vector<EspeciePokemon>& lista
     else                  maxRareza = Rareza::LEGENDARY;
 
     // Filtra especies que no superen la rareza permitida
-    std::vector<const EspeciePokemon*> candidatos;
+    std::vector<const PokemonSpecies*> candidatos;
     for (const auto& e : listaEspecies) {
         if ((int)e.getRareza() <= (int)maxRareza)
             candidatos.push_back(&e);

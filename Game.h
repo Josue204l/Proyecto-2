@@ -6,20 +6,23 @@
 #define PROYECTO_2_GAME_H
 #include <vector>
 #include "FileLoader.h"
-#include "Jugador.h"
+#include "Player.h"
 #include "World.h"
 #include "Objective.h"
 
 class Game {
 private:
-    Jugador jugador;
+    Player jugador;
     World world;
     FileLoader loader;
     int ubicacionActual;
     bool muerto;
+    bool inicializado;
+    bool ligaGanada;
+    int evolucionesRealizadas;
     std::vector<Objective> objetivos;
     void elegirStarter();
-    void procesarLugar(Lugar* lugar);
+    void procesarLugar(Location* lugar);
     void revisarVictoria();
     void revisarDerrota();
     void generarReporteFinal();
