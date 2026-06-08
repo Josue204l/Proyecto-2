@@ -112,7 +112,10 @@ void Game::inicializar() {
     objetivos.emplace_back("Conseguir 3 medallas de gimnasio");
     objetivos.emplace_back("Derrotar a Giovanni en la Liga");
 
-    jugador = Jugador("Ash");
+    string nombre;
+    cout << "\n¿Cómo te llamas, entrenador? ";
+    cin >> nombre;
+    jugador = Jugador(nombre);
     elegirStarter();
 
     log.log("Aventura comenzando...\n");
@@ -314,6 +317,24 @@ void Game::generarReporteFinal() {
         log.log("Reporte guardado en data/reporte_final.txt");
     }
 }
+void Game::revisarEvoluciones() {
+    const auto& especies = loader.getEspecie();
+    for (int i = 0; i < jugador.getTamano(); i++) {
+        Pokemon* p = jugador.getPokemon(i);
+        if (p->puedeEvolucionar()) {
+            string nombreEvo = p->getEspeciePokemon().getNombreEvolucion();
+            for (const auto& esp : especies) {
+                if (esp.getNombre() == nombreEvo) {
+                    string nombreAntes = p->getNombre();
+                    p->evolucionar(esp);
+                    Logger::getInstancia().log("  ¡" + nombreAntes + " evolucionó a " + esp.getNombre() + "!");
+                    cout << "\n  *** ¡" + nombreAntes + " evolucionó a " + esp.getNombre() + "! ***\n" << endl;
+                    break;
+                }
+            }
+        }
+    }
+}
 
 void Game::correr() {
     Logger& log = Logger::getInstancia();
@@ -326,6 +347,7 @@ void Game::correr() {
 
     while (!muerto) {
         procesarLugar(actual);
+        revisarEvoluciones();
         revisarDerrota();
         if (muerto) break;
 

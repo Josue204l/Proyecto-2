@@ -23,6 +23,7 @@ private:
     void revisarVictoria();
     void revisarDerrota();
     void generarReporteFinal();
+    void revisarEvoluciones();
 public:
     Game();
     void inicializar();

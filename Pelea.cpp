@@ -53,23 +53,37 @@ static void mostrarEstado(Jugador& juga, int idx, const Pokemon& enemigo) {
 
 // Devuelve true si usó un ítem, false si no había o canceló
 static bool usarItem(Jugador& juga, int idx) {
-    if (juga.getInventario().estaVacio()) {
-        cout << "  ¡No tienes ítems!" << endl;
+    // Construir lista solo de ítems que curan
+    const auto& items = juga.getInventario().getItems();
+    vector<int> indicesCuracion;
+    for (int i = 0; i < (int)items.size(); i++) {
+        TipoItem t = const_cast<Item&>(items[i]).getTipo();
+        if (t == TipoItem::POTION || t == TipoItem::SUPER_POTION || t == TipoItem::RARE_CANDY)
+            indicesCuracion.push_back(i);
+    }
+
+    if (indicesCuracion.empty()) {
+        cout << "  ¡No tienes pociones!" << endl;
         return false;
     }
-    const auto& items = juga.getInventario().getItems();
+
     cout << "  Ítems disponibles:" << endl;
-    for (int i = 0; i < (int)items.size(); i++)
-        cout << "    [" << (i+1) << "] " << const_cast<Item&>(items[i]).getNombre()
-             << " (" << const_cast<Item&>(items[i]).getValor() << " HP)" << endl;
+    for (int i = 0; i < (int)indicesCuracion.size(); i++) {
+        Item& item = const_cast<Item&>(items[indicesCuracion[i]]);
+        cout << "    [" << (i+1) << "] " << item.getNombre()
+             << " (cura " << item.getValor() << " HP)" << endl;
+    }
+
     int op = 0;
-    while (op < 1 || op > (int)items.size()) {
+    while (op < 1 || op > (int)indicesCuracion.size()) {
         cout << "  Elige (0 cancela): ";
         cin >> op;
         if (op == 0) return false;
     }
-    Item item = juga.getInventario().getItem(op - 1);
-    juga.getInventario().removerItem(op - 1);
+
+    int idxReal = indicesCuracion[op - 1];
+    Item item = juga.getInventario().getItem(idxReal);
+    juga.getInventario().removerItem(idxReal);
     int cura = min(item.getValor(), juga.getPokemon(idx)->getHPMAX() - juga.getPokemon(idx)->getHpActual());
     juga.getPokemon(idx)->dannioRecibido(-cura);
     Logger::getInstancia().log("  Usaste " + item.getNombre() + " en " + juga.getPokemon(idx)->getNombre() + ".");
@@ -134,8 +148,8 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
 
         // --- Turno del jugador ---
         int accion = 0;
-        while (accion < 1 || accion > 3) {
-            cout << "  [1] Atacar  [2] Usar ítem  [3] Pokéball\n  Tu elección: ";
+        while (accion < 1 || accion > 4) {
+            cout << "  [1] Atacar  [2] Usar ítem  [3] Pokéball  [4] Huir\n  Tu elección: ";
             cin >> accion;
         }
 
@@ -151,8 +165,8 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
                 enemigoContraataca = false;
             }
         } else if (accion == 2) {
-            usarItem(juga, idx); // si no hay ítem el jugador pierde su turno pero el enemigo ataca
-        } else {
+            usarItem(juga, idx);
+        } else if (accion == 3) {
             bool teniaBall = false;
             const auto& inv = juga.getInventario().getItems();
             for (int i = 0; i < (int)inv.size(); i++) {
@@ -161,12 +175,19 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
             }
             if (!teniaBall) {
                 cout << "  ¡No tienes Pokéballs!" << endl;
-                // sin ball: pierde el turno pero el enemigo ataca UNA sola vez
             } else if (intentarCaptura(juga, pokemonSalvaje)) {
                 batallaTerminada = true;
                 enemigoContraataca = false;
             }
-            // si falló la captura, el enemigo contraataca una vez
+        } else if (accion == 4) {
+            if (rand() % 100 < 70) {
+                log.log("  ¡Escapaste con éxito!");
+                cout << "  ¡Escapaste con éxito!" << endl;
+                return false;
+            } else {
+                cout << "  ¡No pudiste escapar!" << endl;
+                log.log("  Intentó escapar pero falló.");
+            }
         }
 
         if (batallaTerminada) break;
@@ -199,7 +220,6 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
             }
         }
     }
-
     if (victoria) {
         log.log("  Resultado: ¡Victoria! " + pokemonSalvaje.getNombre() + " fue derrotado.");
         for (int i = 0; i < juga.getTamano(); i++) {
@@ -208,8 +228,11 @@ bool Pelea::empezarBatallaSalvaje(Jugador& juga, Pokemon pokemonSalvaje) {
                 break;
             }
         }
+        return true;  // salimos antes de intentar captura
     }
-    return victoria;
+
+    // Solo llegamos acá si la batalla terminó sin victoria (captura o huida)
+    return false;
 }
 
 bool Pelea::empezarBatallaEntrenador(Jugador& juga, Entrenador entrenador) {
